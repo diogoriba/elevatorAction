@@ -12,6 +12,12 @@ namespace MovePrototype
     /// </summary>
     public class Game1 : Game
     {
+        enum State
+        {
+            Walking,
+            Jumping,
+            Falling
+        }
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D charTexture;
@@ -21,9 +27,14 @@ namespace MovePrototype
         Vector2 playerPosition;
         Vector2 cellSize;
         Vector2 boundingBoxSize;
+        KeyboardState previousKeyboardState;
+        State currentState = State.Walking;
+        Vector2 inputWhenJumpStarted;
+        float elapsedJumpTime = 0f;
         int scale;
         bool walljump = false;
         bool jiggle = false;
+        bool kerbal = false;
         enum BoardElements
         {
             Floor,
@@ -102,25 +113,77 @@ namespace MovePrototype
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Vector2 input = Vector2.Zero;
             Vector2 tentativePosition = playerPosition;
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                input.X += 1;
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                input.X -= 1;
-            input.Y += 1;
 
-            float mag = input.Length();
-            if (mag > 0)
-                input /= mag;
+            if (Keyboard.GetState().IsKeyDown(Keys.Up) && !previousKeyboardState.IsKeyDown(Keys.Up) && (currentState == State.Walking || kerbal))
+            {
+                currentState = State.Jumping;
+                inputWhenJumpStarted = new Vector2();
+                if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                    inputWhenJumpStarted.X += 1;
+                if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                    inputWhenJumpStarted.X -= 1;
+                elapsedJumpTime = 0f;
+            }
 
-            bool caindo = !CollisionFloor(tentativePosition + new Vector2(boundingBoxSize.X / 2, boundingBoxSize.Y));
+            switch (currentState)
+            {
+                case State.Walking:
+                    if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                        input.X += 1;
+                    if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                        input.X -= 1;
+                    input.Y += 1;
+                    float mag = input.Length();
+                    if (mag > 0)
+                        input /= mag;
+                    tentativePosition += input * deltaTime * cellSize * new Vector2(5, 0);
+                    break;
+                case State.Jumping:
+                    input.X += inputWhenJumpStarted.X;
+                    input.Y -= 1;
+                    mag = input.Length();
+                    if (mag > 0)
+                        input /= mag;
+                    tentativePosition += input * deltaTime * cellSize * new Vector2(3, 0.5f);
+                    elapsedJumpTime += deltaTime;
+                    if (elapsedJumpTime > 0.5)
+                    {
+                        currentState = State.Falling;
+                    }
+                    break;
+                case State.Falling:
+                    input.X += inputWhenJumpStarted.X;
+                    input.Y += 1;
+                    mag = input.Length();
+                    if (mag > 0)
+                        input /= mag;
+                    tentativePosition += input * deltaTime * cellSize * new Vector2(3, 0.5f);
+                    elapsedJumpTime += deltaTime;
+                    //if (elapsedJumpTime > 1 || tentativePosition.Y > startingJumpY)
+                    //{
+                    //    tentativePosition.Y = startingJumpY;
+                    //}
+                    break;
+                default:
+                    break;
+            }
 
-            tentativePosition += input * deltaTime * cellSize.X * 5;
-            tentativePosition = Collision(tentativePosition) ? AdjustPosition(tentativePosition) : tentativePosition;
-            tentativePosition = Collision(tentativePosition + boundingBoxSize) ? AdjustPosition(tentativePosition) : tentativePosition;
+            bool grounded = CollisionFloor(tentativePosition + new Vector2(boundingBoxSize.X / 2, boundingBoxSize.Y));
+            if (currentState == State.Falling && grounded)
+            {
+                currentState = State.Walking;
+            }
+            if (currentState == State.Walking && !grounded)
+            {
+                currentState = State.Falling;
+            }
+            tentativePosition = Collision(tentativePosition, !grounded) ? AdjustPosition(tentativePosition) : tentativePosition;
+            tentativePosition = Collision(tentativePosition + boundingBoxSize, !grounded) ? AdjustPosition(tentativePosition) : tentativePosition;
             tentativePosition = CollisionFloor(tentativePosition + new Vector2(boundingBoxSize.X / 2, boundingBoxSize.Y)) ? AdjustPositionFloor(tentativePosition) : tentativePosition;
             playerPosition = tentativePosition;
 
             base.Update(gameTime);
+            previousKeyboardState = Keyboard.GetState();
         }
 
         private bool CollisionFloor(Vector2 point)
@@ -128,7 +191,7 @@ namespace MovePrototype
             Vector2 boardPosition = playerPosition / cellSize;
             if (board[(int)boardPosition.Y, (int)boardPosition.X] == BoardElements.Floor)
             {
-                if (point.Y > ((int)boardPosition.Y * cellSize.Y) + cellSize.Y - 3)
+                if (point.Y >= ((int)boardPosition.Y * cellSize.Y) + cellSize.Y - 3)
                 {
                     return true;
                 }
@@ -144,10 +207,10 @@ namespace MovePrototype
             return new Vector2(point.X, ((int)boardPosition.Y * cellSize.Y) + cellSize.Y - boundingBoxSize.Y - bounce);
         }
 
-        private bool Collision(Vector2 point)
+        private bool Collision(Vector2 point, bool caindo)
         {
             Vector2 boardPosition = point / cellSize;
-            if(!CollisionFloor(point + new Vector2(boundingBoxSize.X / 2, boundingBoxSize.Y)) && !jiggle && !walljump)
+            if(caindo && currentState != State.Jumping  && currentState != State.Falling && !jiggle && !walljump)
             {
                 //int posy = ((int)boardPosition.Y - 1 < 0) ? (int)boardPosition.Y : (int)boardPosition.Y - 1;
 
