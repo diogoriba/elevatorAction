@@ -144,7 +144,7 @@ namespace MovePrototype
                     mag = input.Length();
                     if (mag > 0)
                         input /= mag;
-                    tentativePosition += input * deltaTime * cellSize * new Vector2(3, 0.5f);
+                    tentativePosition += input * deltaTime * cellSize * new Vector2(3, 1f);
                     elapsedJumpTime += deltaTime;
                     if (elapsedJumpTime > 0.5)
                     {
@@ -157,7 +157,7 @@ namespace MovePrototype
                     mag = input.Length();
                     if (mag > 0)
                         input /= mag;
-                    tentativePosition += input * deltaTime * cellSize * new Vector2(3, 0.5f);
+                    tentativePosition += input * deltaTime * cellSize * new Vector2(3, 1f);
                     elapsedJumpTime += deltaTime;
                     //if (elapsedJumpTime > 1 || tentativePosition.Y > startingJumpY)
                     //{
@@ -175,6 +175,11 @@ namespace MovePrototype
             }
             if (currentState == State.Walking && !grounded)
             {
+                inputWhenJumpStarted = new Vector2();
+                if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                    inputWhenJumpStarted.X += 1;
+                if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                    inputWhenJumpStarted.X -= 1;
                 currentState = State.Falling;
             }
             tentativePosition = Collision(tentativePosition, !grounded) ? AdjustPosition(tentativePosition) : tentativePosition;
