@@ -31,7 +31,7 @@ namespace elevatorAction
         protected override void Initialize()
         {
             //*
-            map = new Map();
+            map = Map.Instance;
 
             map.Entities.Add(new Camera());
             map.Entities.Add(new Player(new Vector2(2, 0) * map.CellSize));

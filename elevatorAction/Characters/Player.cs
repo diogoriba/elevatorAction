@@ -168,7 +168,10 @@ namespace elevatorAction.Characters
 
             List<Entity> entities = Map.Instance.Entities;
             var collidesWith = entities.Where(x => x.Body.Collides(this.Body));
-            collidesWith.Where(x => x is Wall || x is Floor).Select(e => e.Body).ToList().ForEach(e => e.Adjust(this.Body));
+            var onlyWallsAndFloors = collidesWith.Where(x => x is Wall || x is Floor);
+            var collidingBodies = onlyWallsAndFloors.Select(e => e.Body).ToList();
+                
+            collidingBodies.ForEach(e => e.Adjust(this.Body));
             
             points = points.Select(x => tentativePosition + (x * Map.Instance.CellSize)).ToList();
 

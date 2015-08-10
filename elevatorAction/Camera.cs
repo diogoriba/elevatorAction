@@ -19,6 +19,7 @@ namespace elevatorAction
 
         public override void Initialize(Game game)
         {
+            base.Initialize(game);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)

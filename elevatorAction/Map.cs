@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using elevatorAction.MapElements;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -30,8 +31,8 @@ namespace elevatorAction
             }
         }
 
-        private readonly Vector2 CELL_SIZE = new Vector2(8, 8);
-        private const int SCALE = 3;
+        public const int CELL_SIZE = 8;
+        public const int SCALE = 3;
 
         public MapElement[,] Grid { get; private set; }
         public List<Entity> Entities { get; private set; }
@@ -41,9 +42,9 @@ namespace elevatorAction
         private Texture2D floorTexture;
         private Texture2D holeTexture;
 
-        public Map()
+        private Map()
         {
-            CellSize = CELL_SIZE * SCALE;   
+            CellSize = new Vector2(CELL_SIZE * SCALE, CELL_SIZE * SCALE);   
             Entities = new List<Entity>();
         }
 
@@ -99,6 +100,27 @@ namespace elevatorAction
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor,  MapElement.Floor,  MapElement.Floor,  MapElement.Floor,  MapElement.Floor, MapElement.Wall, MapElement.Wall },
             };
+            for (int line = 0; line < this.Grid.GetLength(0); line++)
+            {
+                for (int column = 0; column < this.Grid.GetLength(1); column++)
+                {
+                    Entity entityToAdd = null;
+                    Vector2 position = new Vector2(column * CellSize.X, line * CellSize.Y);
+                    switch (Grid[line, column])
+                    {
+                        case MapElement.Wall:
+                            entityToAdd = new Wall(position);
+                            break;
+                        case MapElement.Floor:
+                            entityToAdd = new Floor(position);
+                            break;
+                    }
+                    if (entityToAdd != null)
+                    {
+                        Entities.Add(entityToAdd);
+                    }
+                }
+            }
 
             floorTexture = new Texture2D(game.GraphicsDevice, (int)this.CellSize.X, (int)this.CellSize.Y);
             Color[] floorColors = Enumerable.Repeat(Color.Blue, (int)this.CellSize.X * (int)this.CellSize.Y).ToArray();

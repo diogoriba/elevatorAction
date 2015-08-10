@@ -45,6 +45,8 @@ namespace elevatorAction
             Vector2 adjustedPosition = new Vector2(tileCenter.X + (Map.Instance.CellSize.X / 2) * Math.Sign(difference.X) * -1, tileCenter.Y + (Map.Instance.CellSize.Y / 2) * Math.Sign(difference.Y) * -1);
             Vector2 movement = adjustedPosition * AdjustMask + body.Position * reverse;
             body.Position = movement;
+            // this is actually snapping the top-left coordinate of the body being adjusted to this position
+            // we need to change this into a force that is applied back in the body, maybe
         }
     }
 }

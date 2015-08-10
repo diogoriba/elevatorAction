@@ -8,11 +8,8 @@ namespace elevatorAction.MapElements
 {
     public class Wall : Entity
     {
-        private Vector2 _initialPosition;
-
-        public Wall(Vector2 initialPosition)
+        public Wall(Vector2 initialPosition) : base(initialPosition, Map.Instance.CellSize)
         {
-            _initialPosition = initialPosition;
         }
 
         public override void Draw(Microsoft.Xna.Framework.GameTime gameTime, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
