@@ -35,18 +35,16 @@ namespace elevatorAction
 
         public virtual void Adjust(Body body)
         {
-            Vector2 boardPosition = body.Position / Map.Instance.CellSize;
-            Vector2 tileTopLeft = this.Position;
-            Vector2 tileCenter = tileTopLeft + (this.Size / 2);
-            Vector2 difference = tileCenter - body.Position;
-            difference.Normalize();
-
-            Vector2 reverse = new Vector2(AdjustMask.Y, AdjustMask.X);
-            Vector2 adjustedPosition = new Vector2(tileCenter.X + (Map.Instance.CellSize.X / 2) * Math.Sign(difference.X) * -1, tileCenter.Y + (Map.Instance.CellSize.Y / 2) * Math.Sign(difference.Y) * -1);
-            Vector2 movement = adjustedPosition * AdjustMask + body.Position * reverse;
-            body.Position = movement;
-            // this is actually snapping the top-left coordinate of the body being adjusted to this position
-            // we need to change this into a force that is applied back in the body, maybe
+            Rectangle tileCollisionRectangle = CollisionRectangle;
+            Rectangle collisionBox = Rectangle.Intersect(tileCollisionRectangle, body.CollisionRectangle);
+            Vector2 collisionBoxCenter = collisionBox.Center.ToVector2();
+            Vector2 tileCenter = tileCollisionRectangle.Center.ToVector2();
+            Vector2 direction = collisionBoxCenter - tileCenter;
+            direction = new Vector2(Math.Sign(direction.X), Math.Sign(direction.Y));
+            Vector2 magnitude = new Vector2(collisionBox.Width, collisionBox.Height);
+            Vector2 force = direction * magnitude;
+            body.Position += force * AdjustMask;
+            body.Position = body.Position.ToPoint().ToVector2(); // remove this line to add jiggling
         }
     }
 }

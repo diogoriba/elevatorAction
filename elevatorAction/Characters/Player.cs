@@ -125,6 +125,7 @@ namespace elevatorAction.Characters
                     Jumping(gameTime);
                     break;
                 case State.Falling:
+                    Falling(gameTime);
                     break;
                 case State.FallingHole:
                     break;
@@ -133,10 +134,14 @@ namespace elevatorAction.Characters
             }
         }
 
+        private void BeginWalking()
+        {
+            _currentState = State.Walking;
+        }
+
         private void Walking(GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            //input
             if (Input.KeyWasPressed(Keys.Up))
             {
                 BeginJumping(gameTime);
@@ -156,36 +161,64 @@ namespace elevatorAction.Characters
                 Body.Orientation += Vector2.UnitY; // gravity
 
                 Vector2 tentativePosition = Body.Position;
-                tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(8, 8);
+                tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(8f, 8f);
                 MoveTo(tentativePosition);
             }
         }
 
-        private void MoveTo(Vector2 tentativePosition)
-        {
-            List<Vector2> points = new List<Vector2>();
-            points.Add(new Vector2(0,0));
-
-            List<Entity> entities = Map.Instance.Entities;
-            var collidesWith = entities.Where(x => x.Body.Collides(this.Body));
-            var onlyWallsAndFloors = collidesWith.Where(x => x is Wall || x is Floor);
-            var collidingBodies = onlyWallsAndFloors.Select(e => e.Body).ToList();
-                
-            collidingBodies.ForEach(e => e.Adjust(this.Body));
-            
-            points = points.Select(x => tentativePosition + (x * Map.Instance.CellSize)).ToList();
-
-            Body.Position = tentativePosition;
-        }
-
+        private float _elapsedJumpTime;
         private void BeginJumping(GameTime gameTime)
         {
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             _currentState = State.Jumping;
+            _elapsedJumpTime = 0;
+            Body.Orientation = (Body.Orientation * Vector2.UnitX) + new Vector2(0, -1);
+            Jumping(gameTime);
+            _elapsedJumpTime -= deltaTime; // do not count first frame
         }
 
         private void Jumping(GameTime gameTime)
         {
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Vector2 tentativePosition = Body.Position;
+            tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 2.4f);
+            MoveTo(tentativePosition);
+            _elapsedJumpTime += deltaTime;
+            if (_elapsedJumpTime >= 0.5)
+            {
+                BeginFalling(gameTime);
+            }
+        }
 
+        private void BeginFalling(GameTime gameTime)
+        {
+            _currentState = State.Falling;
+            Body.Orientation = (Body.Orientation * Vector2.UnitX) + new Vector2(0, 1);
+            Falling(gameTime);
+        }
+
+        private void Falling(GameTime gameTime)
+        {
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Vector2 tentativePosition = Body.Position;
+            tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 2.4f);
+            List<Entity> collidedWith = MoveTo(tentativePosition);
+            bool grounded = collidedWith.Any(entity => entity is Floor); // stop condition will be if it collides with a floor ONLY if coming from above
+            if (grounded)
+            {
+                BeginWalking();
+            }
+        }
+
+        private List<Entity> MoveTo(Vector2 tentativePosition)
+        {
+            Body.Position = tentativePosition;
+            var wallsAndFloors = Map.Instance.Entities.Where(entity => entity is Wall || entity is Floor);
+            var collidesWith = wallsAndFloors.Where(entity => entity.Body.Collides(Body)).ToList();
+            var collidingBodies = collidesWith.Select(e => e.Body).ToList();
+
+            collidingBodies.ForEach(e => e.Adjust(Body));
+            return collidesWith.ToList();
         }
 
         public override void Initialize(Game game)

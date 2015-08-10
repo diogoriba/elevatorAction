@@ -77,6 +77,11 @@ namespace elevatorAction
             Input.Update();
             map.Update(gameTime);
 
+            if (Input.KeyWasPressed(Keys.D1))
+            {
+                Initialize();
+            }
+
             base.Update(gameTime);
         }
 

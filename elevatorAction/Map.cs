@@ -1,6 +1,7 @@
 ﻿using elevatorAction.MapElements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,10 +42,11 @@ namespace elevatorAction
         private Texture2D wallTexture;
         private Texture2D floorTexture;
         private Texture2D holeTexture;
+        private Game game;
 
         private Map()
         {
-            CellSize = new Vector2(CELL_SIZE * SCALE, CELL_SIZE * SCALE);   
+            CellSize = new Vector2(CELL_SIZE * SCALE, CELL_SIZE * SCALE);
             Entities = new List<Entity>();
         }
 
@@ -86,6 +88,7 @@ namespace elevatorAction
 
         public void Initialize(Game game)
         {
+            this.game = game;
             Grid = new MapElement[,] { 
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
