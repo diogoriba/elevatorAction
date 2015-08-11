@@ -26,6 +26,11 @@ namespace elevatorAction.Characters
         private State _currentState = State.Walking; // player
         private Vector2 _inputWhenJumpStarted; // player
 
+        public string MyState
+        {
+            get { return _currentState.ToString(); }
+        }
+
         public Player(Vector2 startPosition)
             : base(startPosition)
         {

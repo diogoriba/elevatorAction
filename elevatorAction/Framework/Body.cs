@@ -6,6 +6,7 @@ using System.Text;
 
 namespace elevatorAction
 {
+
     public class Body
     {
         public Vector2 Position { get; set; }
@@ -37,14 +38,14 @@ namespace elevatorAction
         {
             Rectangle tileCollisionRectangle = CollisionRectangle;
             Rectangle collisionBox = Rectangle.Intersect(tileCollisionRectangle, body.CollisionRectangle);
-            Vector2 collisionBoxCenter = collisionBox.Center.ToVector2();
-            Vector2 tileCenter = tileCollisionRectangle.Center.ToVector2();
+            Vector2 collisionBoxCenter = new Vector2(collisionBox.Left + collisionBox.Width / 2, collisionBox.Top + collisionBox.Height / 2);
+            Vector2 tileCenter = new Vector2(Position.X + Size.X / 2, Position.Y + Size.Y / 2);
             Vector2 direction = collisionBoxCenter - tileCenter;
             direction = new Vector2(Math.Sign(direction.X), Math.Sign(direction.Y));
             Vector2 magnitude = new Vector2(collisionBox.Width, collisionBox.Height);
             Vector2 force = direction * magnitude;
             body.Position += force * AdjustMask;
-            body.Position = body.Position.ToPoint().ToVector2(); // remove this line to add jiggling
+            body.Position = new Vector2((float)Math.Round(body.Position.X), (float)Math.Round(body.Position.Y)); // remove this line to add jiggling
         }
     }
 }

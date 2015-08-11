@@ -38,19 +38,19 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Body.cs" />
+    <Compile Include="Framework\Body.cs" />
     <Compile Include="Camera.cs" />
-    <Compile Include="Characters\Floor.cs" />
+    <Compile Include="Map\Floor.cs" />
     <Compile Include="Characters\Player.cs" />
-    <Compile Include="Characters\Wall.cs" />
-    <Compile Include="Entity.cs" />
+    <Compile Include="Map\Wall.cs" />
+    <Compile Include="Framework\Entity.cs" />
     <Compile Include="ElevatorAction.cs" />
-    <Compile Include="ICanDraw.cs" />
-    <Compile Include="ICanUpdate.cs" />
-    <Compile Include="Input.cs" />
+    <Compile Include="Framework\ICanDraw.cs" />
+    <Compile Include="Framework\ICanUpdate.cs" />
+    <Compile Include="Framework\Input.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Map.cs" />
+    <Compile Include="Map\Map.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

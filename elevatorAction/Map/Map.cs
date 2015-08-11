@@ -115,6 +115,8 @@ namespace elevatorAction
                             entityToAdd = new Wall(position);
                             break;
                         case MapElement.Floor:
+                            entityToAdd = new Wall(position + new Vector2(0, 3), CellSize - new Vector2(0, 3)); // do not question my methods
+                            Entities.Add(entityToAdd);
                             entityToAdd = new Floor(position);
                             break;
                     }

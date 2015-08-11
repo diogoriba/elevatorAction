@@ -12,6 +12,11 @@ namespace elevatorAction.MapElements
         {
         }
 
+        public Wall(Vector2 initialPosition, Vector2 initialSize)
+            : base(initialPosition, initialSize)
+        {
+        }
+
         public override void Draw(Microsoft.Xna.Framework.GameTime gameTime, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
         {
             

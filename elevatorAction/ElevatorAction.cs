@@ -15,6 +15,7 @@ namespace elevatorAction
         SpriteBatch spriteBatch;
 
         Map map;
+        public static Player player;
 
         public ElevatorAction()
         {
@@ -32,9 +33,9 @@ namespace elevatorAction
         {
             //*
             map = Map.Instance;
-
+            player = new Player(new Vector2(2, 0) * map.CellSize);
             map.Entities.Add(new Camera());
-            map.Entities.Add(new Player(new Vector2(2, 0) * map.CellSize));
+            map.Entities.Add(player);
 
             map.Initialize(this);
 
