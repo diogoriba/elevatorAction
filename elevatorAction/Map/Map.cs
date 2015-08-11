@@ -1,4 +1,4 @@
-﻿using elevatorAction.MapElements;
+using elevatorAction.MapElements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,6 +13,7 @@ namespace elevatorAction
     {
         Empty,
         Floor,
+        FloorWall,
         Hole,
         Wall
     }
@@ -39,8 +40,7 @@ namespace elevatorAction
         public List<Entity> Entities { get; private set; }
         public Vector2 CellSize { get; private set; }
 
-        private Texture2D wallTexture;
-        private Texture2D floorTexture;
+        
         private Texture2D holeTexture;
         private Game game;
 
@@ -52,37 +52,6 @@ namespace elevatorAction
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            for (int line = 0; line < this.Grid.GetLength(0); line++)
-            {
-                for (int column = 0; column < this.Grid.GetLength(1); column++)
-                {
-                    Texture2D textureToDraw = null;
-                    bool floor = false;
-                    switch (this.Grid[line, column])
-                    {
-                        case MapElement.Floor:
-                            textureToDraw = wallTexture;
-                            floor = true;
-                            break;
-                        case MapElement.Empty:
-                            textureToDraw = floorTexture;
-                            floor = false;
-                            break;
-                        case MapElement.Hole:
-                            textureToDraw = holeTexture;
-                            break;
-                        case MapElement.Wall:
-                            textureToDraw = wallTexture;
-                            break;
-                        default:
-                            break;
-                    }
-                    spriteBatch.Draw(textureToDraw, new Rectangle(column * ((int)this.CellSize.X), line * (int)this.CellSize.Y, (int)this.CellSize.X, (int)this.CellSize.Y), Color.White);
-                    if (floor)
-                        spriteBatch.Draw(wallTexture, new Rectangle(column * ((int)this.CellSize.X), line * (int)this.CellSize.Y + ((int)this.CellSize.Y - 3), (int)this.CellSize.X, 3), Color.White);
-                }
-            }
-
             Entities.ForEach(x => x.Draw(gameTime, spriteBatch));
         }
 
@@ -95,7 +64,7 @@ namespace elevatorAction
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Floor,  MapElement.Floor,  MapElement.Floor,  MapElement.Floor, MapElement.Wall, MapElement.Wall },
+                { MapElement.Wall, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.FloorWall, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.FloorWall,  MapElement.Floor,  MapElement.Floor,  MapElement.Floor, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
@@ -115,9 +84,12 @@ namespace elevatorAction
                             entityToAdd = new Wall(position);
                             break;
                         case MapElement.Floor:
-                            entityToAdd = new Wall(position + new Vector2(0, 3), CellSize - new Vector2(0, 3)); // do not question my methods
-                            Entities.Add(entityToAdd);
                             entityToAdd = new Floor(position);
+                            break;
+                        case MapElement.FloorWall:
+                            entityToAdd = new Floor(position);
+                            Entities.Add(entityToAdd);
+                            entityToAdd = new Wall(position + ((CellSize * Vector2.UnitY) / 3), CellSize - ((CellSize * Vector2.UnitY) / 3));
                             break;
                     }
                     if (entityToAdd != null)
@@ -127,13 +99,8 @@ namespace elevatorAction
                 }
             }
 
-            floorTexture = new Texture2D(game.GraphicsDevice, (int)this.CellSize.X, (int)this.CellSize.Y);
-            Color[] floorColors = Enumerable.Repeat(Color.Blue, (int)this.CellSize.X * (int)this.CellSize.Y).ToArray();
-            floorTexture.SetData(floorColors);
             holeTexture = new Texture2D(game.GraphicsDevice, (int)this.CellSize.X, (int)this.CellSize.Y);
-            holeTexture.SetData(Enumerable.Repeat(Color.Gray, (int)this.CellSize.X * (int)this.CellSize.Y).ToArray());
-            wallTexture = new Texture2D(game.GraphicsDevice, (int)this.CellSize.X, (int)this.CellSize.Y);
-            wallTexture.SetData(Enumerable.Repeat(Color.Navy, (int)this.CellSize.X * (int)this.CellSize.Y).ToArray());
+            holeTexture.SetData(Enumerable.Repeat(Color.Gray, (int)this.CellSize.X * (int)this.CellSize.Y).ToArray());            
 
             Entities.ForEach(x => x.Initialize(game));
         }
