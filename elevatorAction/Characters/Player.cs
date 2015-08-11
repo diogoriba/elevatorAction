@@ -1,4 +1,4 @@
-﻿using elevatorAction.MapElements;
+using elevatorAction.MapElements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -21,10 +21,8 @@ namespace elevatorAction.Characters
 
         private readonly Vector2 PLAYER_SIZE_BASE = new Vector2() { X = 2, Y = 3 };
         private Texture2D _playerTexture;
-        private Texture2D _charTexture; // player
-        private Vector2?[] _playerBullets = new Vector2?[3]; // player
-        private State _currentState = State.Walking; // player
-        private Vector2 _inputWhenJumpStarted; // player
+        private BulletPool bulletPool;
+        private State _currentState = State.Walking;
 
         public string MyState
         {
@@ -45,92 +43,19 @@ namespace elevatorAction.Characters
 
         public override void Update(GameTime gameTime)
         {
-
-            /*
-            Vector2 input = Vector2.Zero;
-            Vector2 tentativePosition = playerPosition;
-            switch (currentState)
-            {
-                case State.Walking:
-                    if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                    {
-                        playerDirection = Direction.Right;
-                        input.X += 1;
-                    }
-                    if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                    {
-                        playerDirection = Direction.Left;
-                        input.X -= 1;
-                    }
-                    input.Y += 1;
-                    float mag = input.Length();
-                    if (mag > 0)
-                        input /= mag;
-                    tentativePosition += input * deltaTime * cellSize * new Vector2(8, 0);
-                    break;
-                case State.Jumping:
-                    input.X += inputWhenJumpStarted.X;
-                    input.Y -= 1;
-                    tentativePosition += input * deltaTime * cellSize * new Vector2(3f, 2.4f);
-                    elapsedJumpTime += deltaTime;
-                    if (elapsedJumpTime > 0.5)
-                    {
-                        currentState = State.Falling;
-                    }
-                    break;
-                case State.FallingHole:
-                    // add snap to hole
-                    input.Y += 1;
-                    tentativePosition += input * deltaTime * cellSize * new Vector2(3f, 2.4f);
-                    elapsedJumpTime += deltaTime;
-                    break;
-                case State.Falling:
-                    input.X += inputWhenJumpStarted.X;
-                    input.Y += 1;
-                    tentativePosition += input * deltaTime * cellSize * new Vector2(3f, 2.4f);
-                    elapsedJumpTime += deltaTime;
-                    break;
-                default:
-                    break;
-            }
-            Rectangle tentativeRect = new Rectangle(
-                (int)tentativePosition.X,
-                (int)tentativePosition.Y,
-                (int)boundingBoxSize.X,
-                (int)boundingBoxSize.Y
-            );
-
-            tentativePosition = CollisionWall2(tentativeRect) ? AdjustPosition2(tentativePosition, BoardElements.Wall) : tentativePosition;
-            //tentativePosition = CollisionWall2(tentativeRect) ? AdjustPosition2(tentativePosition, BoardElements.Wall) : tentativePosition;
-            tentativePosition = CollisionFloor2(tentativeRect) ? AdjustPosition2(tentativePosition, BoardElements.Floor) : tentativePosition;
-            playerPosition = tentativePosition;
-
-            bool grounded = CollisionFloor2(tentativeRect);
-            if ((currentState == State.Falling || currentState == State.FallingHole) && grounded)
-            {
-                currentState = State.Walking;
-            }
-            if (currentState == State.Walking && !grounded)
-            {
-                inputWhenJumpStarted = new Vector2();
-                if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                    inputWhenJumpStarted.X += 1;
-                if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                    inputWhenJumpStarted.X -= 1;
-                currentState = State.FallingHole;
-            }
-            //*/
-
             switch (_currentState)
             {
                 case State.Walking:
                     Walking(gameTime);
+                    Shoot(gameTime);
                     break;
                 case State.Jumping:
                     Jumping(gameTime);
+                    Shoot(gameTime);
                     break;
                 case State.Falling:
                     Falling(gameTime);
+                    Shoot(gameTime);
                     break;
                 case State.FallingHole:
                     break;
@@ -215,6 +140,15 @@ namespace elevatorAction.Characters
             }
         }
 
+        private void Shoot(GameTime gameTime)
+        {
+            bulletPool.Update(gameTime);
+            if (Input.KeyWasPressed(Keys.Space))
+            {
+                bulletPool.CreateBullet();
+            }
+        }
+
         private List<Entity> MoveTo(Vector2 tentativePosition)
         {
             Body.Position = tentativePosition;
@@ -232,6 +166,7 @@ namespace elevatorAction.Characters
             base.Initialize(game);
             _playerTexture = new Texture2D(game.GraphicsDevice, (int)Body.Size.X, (int)Body.Size.Y);
             _playerTexture.SetData(Enumerable.Repeat(Color.White, (int)Body.Size.X * (int)Body.Size.Y).ToArray());
+            bulletPool = new BulletPool(game, this, 3);
         }
     }
 }

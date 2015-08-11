@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,21 @@ namespace elevatorAction
     {
         public Vector2 Position { get; set; }
         public Vector2 Size { get; set; }
-        public Vector2 Orientation { get; set; }
+        private Vector2 orientation;
+        public Vector2 Orientation 
+        {
+            get { return orientation; }
+            set
+            {
+                if (orientation.X != 0)
+                {
+                    LastActiveOrientation = orientation;
+                }
+
+                orientation = value;
+            }
+        }
+        public Vector2 LastActiveOrientation { get; private set; }
         public Vector2 AdjustMask { get; set; }
 
         public Rectangle CollisionRectangle

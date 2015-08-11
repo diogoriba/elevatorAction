@@ -38,6 +38,8 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Characters\Bullet.cs" />
+    <Compile Include="Characters\Enemy.cs" />
     <Compile Include="Framework\Body.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Map\Floor.cs" />
