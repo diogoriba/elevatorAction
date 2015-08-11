@@ -8,6 +8,23 @@ namespace elevatorAction.MapElements
 {
     public class Floor : Entity
     {
+        private class FloorBody : Body
+        {
+            protected override Vector2 GetAdjustMask(Rectangle collisionBox)
+            {
+                Vector2 adjustMask = Vector2.Zero;
+                if (collisionBox.Width >= collisionBox.Height)
+                {
+                    adjustMask = Vector2.UnitY;
+                }
+                else
+                {
+                    adjustMask = Vector2.UnitX;
+                }
+                return adjustMask;
+            }
+        }
+
         public Floor(Vector2 initialPosition) : base(initialPosition, Map.Instance.CellSize)
         {
         }
@@ -24,8 +41,9 @@ namespace elevatorAction.MapElements
 
         public override void Initialize(Game game)
         {
-            base.Initialize(game);
-            Body.AdjustMask = new Vector2(0, 1);
+            Body = new FloorBody();
+            Body.Position = _initialPosition;
+            Body.Size = _initialSize;
         }
     }
 }

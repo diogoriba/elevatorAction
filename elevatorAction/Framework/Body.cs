@@ -34,7 +34,12 @@ namespace elevatorAction
             return this.CollisionRectangle.Intersects(body.CollisionRectangle);
         }
 
-        public virtual void Adjust(Body body)
+        protected virtual Vector2 GetAdjustMask(Rectangle collisionBox)
+        {
+            return AdjustMask;
+        }
+
+        public void Adjust(Body body)
         {
             Rectangle tileCollisionRectangle = CollisionRectangle;
             Rectangle collisionBox = Rectangle.Intersect(tileCollisionRectangle, body.CollisionRectangle);
@@ -44,7 +49,7 @@ namespace elevatorAction
             direction = new Vector2(Math.Sign(direction.X), Math.Sign(direction.Y));
             Vector2 magnitude = new Vector2(collisionBox.Width, collisionBox.Height);
             Vector2 force = direction * magnitude;
-            body.Position += force * AdjustMask;
+            body.Position += force * GetAdjustMask(collisionBox);
             body.Position = new Vector2((float)Math.Round(body.Position.X), (float)Math.Round(body.Position.Y)); // remove this line to add jiggling
         }
     }
