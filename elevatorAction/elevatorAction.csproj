@@ -42,9 +42,12 @@
     <Compile Include="Characters\Enemy.cs" />
     <Compile Include="Framework\Body.cs" />
     <Compile Include="Camera.cs" />
-    <Compile Include="Map\Floor.cs" />
+    <Compile Include="Framework\ElevatorBody.cs" />
+    <Compile Include="MapStuff\Elevator.cs" />
+    <Compile Include="MapStuff\Floor.cs" />
+    <Compile Include="MapStuff\Map.cs" />
+    <Compile Include="MapStuff\Wall.cs" />
     <Compile Include="Characters\Player.cs" />
-    <Compile Include="Map\Wall.cs" />
     <Compile Include="Framework\Entity.cs" />
     <Compile Include="ElevatorAction.cs" />
     <Compile Include="Framework\ICanDraw.cs" />
@@ -52,7 +55,6 @@
     <Compile Include="Framework\Input.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Map\Map.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
@@ -62,6 +64,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\elevator.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

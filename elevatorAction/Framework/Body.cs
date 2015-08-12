@@ -9,7 +9,18 @@ namespace elevatorAction
 
     public class Body
     {
-        public Vector2 Position { get; set; }
+        protected Vector2 _position;
+        public virtual Vector2 Position 
+        {
+            get
+            {
+                return _position;
+            }
+            set
+            {
+                _position = value;
+            }
+        }
         public Vector2 Size { get; set; }
         private Vector2 orientation;
         public Vector2 Orientation 
@@ -53,7 +64,7 @@ namespace elevatorAction
             return AdjustMask;
         }
 
-        public void Adjust(Body body)
+        public virtual void Adjust(Body body)
         {
             Rectangle tileCollisionRectangle = CollisionRectangle;
             Rectangle collisionBox = Rectangle.Intersect(tileCollisionRectangle, body.CollisionRectangle);

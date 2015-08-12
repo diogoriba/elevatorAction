@@ -1,4 +1,5 @@
 using elevatorAction.Characters;
+using elevatorAction.MapStuff;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -38,6 +39,8 @@ namespace elevatorAction
             player = new Player(new Vector2(2, 0) * map.CellSize);
             map.Entities.Add(new Camera());
             map.Entities.Add(player);
+
+            map.Entities.Add(new Elevator(new Point(11, 0), 2));
 
             map.Initialize(this);
 
