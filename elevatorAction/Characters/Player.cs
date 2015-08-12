@@ -24,11 +24,6 @@ namespace elevatorAction.Characters
         private BulletPool bulletPool;
         private State _currentState = State.Walking;
 
-        public string MyState
-        {
-            get { return _currentState.ToString(); }
-        }
-
         public Player(Vector2 startPosition)
             : base(startPosition)
         {
@@ -43,6 +38,8 @@ namespace elevatorAction.Characters
 
         public override void Update(GameTime gameTime)
         {
+            bulletPool.Update(gameTime);
+            CheckIfShot();
             switch (_currentState)
             {
                 case State.Walking:
@@ -61,6 +58,16 @@ namespace elevatorAction.Characters
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void CheckIfShot()
+        {
+            var bullets = Map.Instance.Entities.Where(entity => entity is Bullet).Select(entity => entity as Bullet).ToList();
+            var collidingBullets = bullets.Where(bullet => bullet.Body.Collides(Body) && bullet.Owner.GetType() != this.GetType()).ToList();
+            if (collidingBullets.Count > 0)
+            {
+                Dead = true;
             }
         }
 
@@ -103,16 +110,25 @@ namespace elevatorAction.Characters
             _currentState = State.Jumping;
             _elapsedJumpTime = 0;
             Body.Orientation = (Body.Orientation * Vector2.UnitX) + new Vector2(0, -1);
-            Jumping(gameTime);
+            Jumping(gameTime, true);
             _elapsedJumpTime -= deltaTime; // do not count first frame
         }
 
-        private void Jumping(GameTime gameTime)
+        private void Jumping(GameTime gameTime, bool started = false)
         {
+            if (Input.KeyWasPressed(Keys.Up) && ElevatorAction.Kerbal && !started)
+            {
+                BeginJumping(gameTime);
+            }
+
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Vector2 tentativePosition = Body.Position;
             tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 2.4f);
-            MoveTo(tentativePosition);
+            var collided = MoveTo(tentativePosition);
+            if (collided.Any(entity => entity is Wall))
+            {
+                Body.Orientation *= Vector2.UnitY;
+            }
             _elapsedJumpTime += deltaTime;
             if (_elapsedJumpTime >= 0.5)
             {
@@ -129,21 +145,30 @@ namespace elevatorAction.Characters
 
         private void Falling(GameTime gameTime)
         {
+            if (Input.KeyWasPressed(Keys.Up) && ElevatorAction.Kerbal)
+            {
+                BeginJumping(gameTime);
+            }
+
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Vector2 tentativePosition = Body.Position;
             tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 2.4f);
             List<Entity> collidedWith = MoveTo(tentativePosition);
-            bool grounded = collidedWith.Any(entity => entity is Floor); // stop condition will be if it collides with a floor ONLY if coming from above
+            bool grounded = collidedWith.Any(entity => entity is Floor);
+            bool walled = collidedWith.Any(entity => entity is Wall);
             if (grounded)
             {
                 BeginWalking();
+            }
+            if (walled)
+            {
+                Body.Orientation *= Vector2.UnitY;
             }
         }
 
         private void Shoot(GameTime gameTime)
         {
-            bulletPool.Update(gameTime);
-            if (Input.KeyWasPressed(Keys.Space))
+            if (Input.KeyWasPressed(Keys.Space) && Body.LastActiveOrientation.X != 0)
             {
                 bulletPool.CreateBullet();
             }
@@ -167,6 +192,7 @@ namespace elevatorAction.Characters
             _playerTexture = new Texture2D(game.GraphicsDevice, (int)Body.Size.X, (int)Body.Size.Y);
             _playerTexture.SetData(Enumerable.Repeat(Color.White, (int)Body.Size.X * (int)Body.Size.Y).ToArray());
             bulletPool = new BulletPool(game, this, 3);
+            Body.Orientation = Vector2.One;
         }
     }
 }

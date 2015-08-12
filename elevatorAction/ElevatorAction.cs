@@ -12,11 +12,12 @@ namespace elevatorAction
     /// </summary>
     public class ElevatorAction : Game
     {
+        public static bool Jiggle = false;
+        public static bool Kerbal = false;
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
         Map map;
-        public static Player player;
 
         public ElevatorAction()
         {
@@ -36,9 +37,12 @@ namespace elevatorAction
             map = Map.Instance;
             map.Entities.Clear();
 
-            player = new Player(new Vector2(2, 0) * map.CellSize);
+            Player player = new Player(new Vector2(2, 0) * map.CellSize);
+            Enemy enemy = new Enemy(new Vector2(7, 2) * map.CellSize);
+
             map.Entities.Add(new Camera());
             map.Entities.Add(player);
+            map.Entities.Add(enemy);
 
             map.Entities.Add(new Elevator(new Point(11, 0), 2));
 

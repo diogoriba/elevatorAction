@@ -35,22 +35,19 @@ namespace elevatorAction.Characters
 
         public void Update(GameTime gametime)
         {
-            var deadBullets = bullets.Where(bullet => bullet.Dead);
-            bullets.RemoveAll(bullet => deadBullets.Contains(bullet));
+            bullets.RemoveAll(bullet => bullet.Dead);
         }
     }
 
     public class Bullet : Entity
     {
-        public bool Dead { get; private set; }
-
         private Texture2D bulletTexture;
-        private Entity owner;
+        public Entity Owner { get; private set; }
 
         public Bullet(Entity owner, Vector2 initialPosition) 
             : base(initialPosition, Map.Instance.CellSize * new Vector2(0.5f, 0.25f))
         {
-            this.owner = owner;
+            Owner = owner;
         }
 
         public override void Draw(Microsoft.Xna.Framework.GameTime gameTime, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
@@ -60,15 +57,16 @@ namespace elevatorAction.Characters
 
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
         {
-            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            Vector2 tentativePosition = Body.Position;
-            tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(12f, 0f);
-            List<Entity> collidesWith = MoveTo(tentativePosition).Where(entity => entity != owner).ToList();
+            List<Entity> collidesWith = MoveTo(Body.Position).Where(entity => entity.GetType() != Owner.GetType()).ToList();
             if (collidesWith.Count > 0)
             {
                 Dead = true;
-                Map.Instance.Entities.Remove(this);
             }
+
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            Vector2 tentativePosition = Body.Position;
+            tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(12f, 0f);
+            MoveTo(tentativePosition);
         }
 
         private List<Entity> MoveTo(Vector2 tentativePosition)
@@ -82,7 +80,7 @@ namespace elevatorAction.Characters
         public override void Initialize(Microsoft.Xna.Framework.Game game)
         {
             base.Initialize(game);
-            Body.Orientation = owner.Body.LastActiveOrientation;
+            Body.Orientation = Owner.Body.LastActiveOrientation;
             bulletTexture = new Texture2D(game.GraphicsDevice, 1, 1);
             bulletTexture.SetData(new Color[] { Color.Yellow });
         }
