@@ -21,6 +21,10 @@ namespace elevatorAction
                 {
                     LastActiveOrientation = orientation;
                 }
+                else if (value.X != 0)
+                {
+                    LastActiveOrientation = value;
+                }
 
                 orientation = value;
             }
