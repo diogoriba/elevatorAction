@@ -68,7 +68,10 @@ namespace elevatorAction
             Vector2 magnitude = new Vector2(collisionBox.Width, collisionBox.Height);
             Vector2 force = direction * magnitude;
             body.Position += force * GetAdjustMask(collisionBox);
-            body.Position = new Vector2((float)Math.Round(body.Position.X), (float)Math.Round(body.Position.Y)); // remove this line to add jiggling
+            if (!ElevatorAction.Jiggle)
+            {
+                body.Position = new Vector2((float)Math.Round(body.Position.X), (float)Math.Round(body.Position.Y)); // remove this line to add jiggling
+            }
         }
     }
 }

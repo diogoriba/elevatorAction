@@ -110,12 +110,17 @@ namespace elevatorAction.Characters
             _currentState = State.Jumping;
             _elapsedJumpTime = 0;
             Body.Orientation = (Body.Orientation * Vector2.UnitX) + new Vector2(0, -1);
-            Jumping(gameTime);
+            Jumping(gameTime, true);
             _elapsedJumpTime -= deltaTime; // do not count first frame
         }
 
-        private void Jumping(GameTime gameTime)
+        private void Jumping(GameTime gameTime, bool started = false)
         {
+            if (Input.KeyWasPressed(Keys.Up) && ElevatorAction.Kerbal && !started)
+            {
+                BeginJumping(gameTime);
+            }
+
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Vector2 tentativePosition = Body.Position;
             tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 2.4f);
@@ -140,6 +145,11 @@ namespace elevatorAction.Characters
 
         private void Falling(GameTime gameTime)
         {
+            if (Input.KeyWasPressed(Keys.Up) && ElevatorAction.Kerbal)
+            {
+                BeginJumping(gameTime);
+            }
+
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Vector2 tentativePosition = Body.Position;
             tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 2.4f);

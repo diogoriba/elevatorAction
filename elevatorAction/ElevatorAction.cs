@@ -11,9 +11,11 @@ namespace elevatorAction
     /// </summary>
     public class ElevatorAction : Game
     {
+        public static bool Jiggle = false;
+        public static bool Kerbal = false;
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
         Map map;
 
         public ElevatorAction()
