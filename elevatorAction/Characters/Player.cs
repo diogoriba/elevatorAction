@@ -24,11 +24,6 @@ namespace elevatorAction.Characters
         private BulletPool bulletPool;
         private State _currentState = State.Walking;
 
-        public string MyState
-        {
-            get { return _currentState.ToString(); }
-        }
-
         public Player(Vector2 startPosition)
             : base(startPosition)
         {
@@ -43,6 +38,7 @@ namespace elevatorAction.Characters
 
         public override void Update(GameTime gameTime)
         {
+            bulletPool.Update(gameTime);
             switch (_currentState)
             {
                 case State.Walking:
@@ -137,7 +133,7 @@ namespace elevatorAction.Characters
             Vector2 tentativePosition = Body.Position;
             tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 2.4f);
             List<Entity> collidedWith = MoveTo(tentativePosition);
-            bool grounded = collidedWith.Any(entity => entity is Floor); // stop condition will be if it collides with a floor ONLY if coming from above
+            bool grounded = collidedWith.Any(entity => entity is Floor);
             bool walled = collidedWith.Any(entity => entity is Wall);
             if (grounded)
             {
@@ -151,8 +147,7 @@ namespace elevatorAction.Characters
 
         private void Shoot(GameTime gameTime)
         {
-            bulletPool.Update(gameTime);
-            if (Input.KeyWasPressed(Keys.Space))
+            if (Input.KeyWasPressed(Keys.Space) && Body.LastActiveOrientation.X != 0)
             {
                 bulletPool.CreateBullet();
             }

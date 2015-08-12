@@ -108,6 +108,8 @@ namespace elevatorAction
         public void Update(GameTime gametime)
         {
             Entities.ForEach(x => x.Update(gametime));
+
+            Entities.RemoveAll(x => x.Dead);
         }
     }
 }
