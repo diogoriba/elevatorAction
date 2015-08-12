@@ -39,6 +39,7 @@ namespace elevatorAction.Characters
         public override void Update(GameTime gameTime)
         {
             bulletPool.Update(gameTime);
+            CheckIfShot();
             switch (_currentState)
             {
                 case State.Walking:
@@ -57,6 +58,16 @@ namespace elevatorAction.Characters
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void CheckIfShot()
+        {
+            var bullets = Map.Instance.Entities.Where(entity => entity is Bullet).Select(entity => entity as Bullet).ToList();
+            var collidingBullets = bullets.Where(bullet => bullet.Body.Collides(Body) && bullet.Owner.GetType() != this.GetType()).ToList();
+            if (collidingBullets.Count > 0)
+            {
+                Dead = true;
             }
         }
 
@@ -171,6 +182,7 @@ namespace elevatorAction.Characters
             _playerTexture = new Texture2D(game.GraphicsDevice, (int)Body.Size.X, (int)Body.Size.Y);
             _playerTexture.SetData(Enumerable.Repeat(Color.White, (int)Body.Size.X * (int)Body.Size.Y).ToArray());
             bulletPool = new BulletPool(game, this, 3);
+            Body.Orientation = Vector2.One;
         }
     }
 }
