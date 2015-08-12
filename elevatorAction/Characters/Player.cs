@@ -112,7 +112,11 @@ namespace elevatorAction.Characters
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Vector2 tentativePosition = Body.Position;
             tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 2.4f);
-            MoveTo(tentativePosition);
+            var collided = MoveTo(tentativePosition);
+            if (collided.Any(entity => entity is Wall))
+            {
+                Body.Orientation *= Vector2.UnitY;
+            }
             _elapsedJumpTime += deltaTime;
             if (_elapsedJumpTime >= 0.5)
             {
@@ -134,9 +138,14 @@ namespace elevatorAction.Characters
             tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 2.4f);
             List<Entity> collidedWith = MoveTo(tentativePosition);
             bool grounded = collidedWith.Any(entity => entity is Floor); // stop condition will be if it collides with a floor ONLY if coming from above
+            bool walled = collidedWith.Any(entity => entity is Wall);
             if (grounded)
             {
                 BeginWalking();
+            }
+            if (walled)
+            {
+                Body.Orientation *= Vector2.UnitY;
             }
         }
 
