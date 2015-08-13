@@ -100,7 +100,16 @@ namespace elevatorAction.Characters
 
                 Vector2 tentativePosition = Body.Position;
                 tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(8f, 8f);
-                MoveTo(tentativePosition);
+                List<Entity> collidesWith = MoveTo(tentativePosition);
+                // TODO: this could totally work with separate elevator entities and collision boxes
+                //var collided = collidesWith.Where(entity => entity is Floor || entity is Elevator).ToList();
+                //var collisionVectors = collided.Select(entity => entity.Body.CollisionRectangle.Center.ToVector2() - Body.CollisionRectangle.Center.ToVector2()).ToList();
+                //var collisionVectorSigns = collisionVectors.Select(vector => Math.Sign(vector.Y)).ToList();
+                //bool squished = collisionVectorSigns.Distinct().ToList().Count > 1;
+                //if (squished)
+                //{
+                //    Dead = true;
+                //}
             }
         }
 
