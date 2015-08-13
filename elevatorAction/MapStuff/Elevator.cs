@@ -8,14 +8,17 @@ using System.Text;
 
 namespace elevatorAction.MapStuff
 {
-    public class Elevator :  Entity
+    public class Elevator : Entity
     {
         private Texture2D _elevatorTexture;
+
+        private readonly int FLOOR_SIZE = 6;
 
         private Point _shaftTop;
         private int _shaftSize;
 
         private int _positionNow;
+        
         private Point PointNow
         {
             get
@@ -23,6 +26,7 @@ namespace elevatorAction.MapStuff
                 return _shaftTop + new Point(0, _positionNow);
             }
         }
+        
         private int _elevatorStartIndex;
 
         private readonly Vector2 ELEVATOR_SIZE = new Vector2(3, 1);
@@ -34,18 +38,21 @@ namespace elevatorAction.MapStuff
         private int _target;
 
         public Elevator(Point shaftTop, int shaftSize)
-            :base()
+            : base()
         {
+            FLOOR_SIZE = 6 * (int)Map.Instance.CellSize.Y;
+            shaftSize *= FLOOR_SIZE;
             _shaftTop = shaftTop;
 
-            if (shaftSize <= 1) shaftSize = 2; //MIN VALUE //LARGE VALUE = BOOM
+            if (shaftSize <= FLOOR_SIZE) shaftSize = 2 * FLOOR_SIZE; //MIN VALUE //LARGE VALUE = BOOM
 
             _elevatorStartIndex = 0;
             _shaftSize = shaftSize;
             _positionNow = _elevatorStartIndex;
 
-            var cellSize = Map.Instance.CellSize;
-            Body = new ElevatorBody(PointNow.ToVector2() * cellSize, ELEVATOR_SIZE * cellSize);
+            //var cellSize = Map.Instance.CellSize;
+            //Body = new ElevatorBody(PointNow.ToVector2() * cellSize, ELEVATOR_SIZE * cellSize);
+            //Body.Position = PointNow.ToVector2() * cellSize;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -95,7 +102,7 @@ namespace elevatorAction.MapStuff
 
         private bool CanMoveDown()
         {
-            return _positionNow < _shaftSize - 1;
+            return _positionNow < _shaftSize - FLOOR_SIZE;
         }
 
         private bool CanMoveUp()
@@ -149,7 +156,7 @@ namespace elevatorAction.MapStuff
             _movingUp = true;
             _timeStoped = 0f;
             _moving = true;
-            SetTarget(_positionNow - 1);
+            SetTarget(_positionNow - FLOOR_SIZE);
 
             return true;
         }
@@ -160,20 +167,24 @@ namespace elevatorAction.MapStuff
             _movingUp = false;
             _timeStoped = 0f;
             _moving = true;
-            SetTarget(_positionNow + 1);
+            SetTarget(_positionNow + FLOOR_SIZE);
 
             return true;
         }
 
         private void SetTarget(int x)
         {
-            _target = MathHelper.Clamp(x, 0, _shaftSize - 1);
+            _target = MathHelper.Clamp(x, 0, _shaftSize - FLOOR_SIZE);
         }
 
         public override void Initialize(Game game)
         {
             base.Initialize(game);
-            _elevatorTexture = game.Content.Load<Texture2D>("elevator");
+            //_elevatorTexture = game.Content.Load<Texture2D>("elevator");
+            Vector2 size = ELEVATOR_SIZE * Map.Instance.CellSize;
+            _elevatorTexture = new Texture2D(game.GraphicsDevice, (int)size.X, (int)size.Y);
+            _elevatorTexture.SetData(Enumerable.Repeat(Color.Red, (int)size.X * (int)size.Y).ToArray());
+            Body = new ElevatorBody(PointNow.ToVector2() * Map.Instance.CellSize, ELEVATOR_SIZE * Map.Instance.CellSize);
         }
     }
 }

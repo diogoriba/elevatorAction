@@ -16,14 +16,14 @@ namespace elevatorAction.Framework
 
             _elevatorTop = new Body(size: size);
             _elevatorBottom = new Body(size: size);
-            Position = _position;
+            Position = position;
         }
 
         public override Vector2 Position
         {
             get
             {
-                return base.Position;
+                return _position;
             }
             set
             {
@@ -32,7 +32,7 @@ namespace elevatorAction.Framework
                 if (_elevatorBottom != null)
                     _elevatorBottom.Position = value + Map.Instance.CellSize;
 
-                base.Position = value;
+                _position = value;
             }
         }
 
