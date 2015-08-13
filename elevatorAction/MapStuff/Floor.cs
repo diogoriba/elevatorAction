@@ -9,17 +9,20 @@ namespace elevatorAction.MapElements
 {
     public class FloorBody : Body
     {
-        public override bool Collides(Body body)
+        public override void Adjust(Body body)
         {
-            bool collides = base.Collides(body);
-            Rectangle collisionBox = Rectangle.Intersect(body.CollisionRectangle, CollisionRectangle);
+            Rectangle tileCollisionRectangle = CollisionRectangle;
+            Rectangle collisionBox = Rectangle.Intersect(tileCollisionRectangle, body.CollisionRectangle);
             bool flatAngle = collisionBox.Width >= collisionBox.Height;
-            Vector2 collisionBoxCenter = new Vector2(collisionBox.Left + collisionBox.Width / 2, collisionBox.Top + collisionBox.Height / 2);
-            Vector2 tileCenter = new Vector2(Position.X + Size.X / 2, Position.Y + Size.Y / 2);
-            Vector2 direction = collisionBoxCenter - tileCenter;
-            direction = new Vector2(Math.Sign(direction.X), Math.Sign(direction.Y));
-            bool fromAbove = direction.Y < 0;
-            return collides && flatAngle && fromAbove;
+            if (flatAngle)
+            {
+                AdjustMask = Vector2.UnitY;
+            }
+            else
+            {
+                AdjustMask = Vector2.UnitX;
+            }
+            base.Adjust(body);
         }
     }
 

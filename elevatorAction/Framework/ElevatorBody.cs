@@ -20,8 +20,8 @@ namespace elevatorAction.Framework
         {
             var cellSize = Map.Instance.CellSize;
 
-            _elevatorTop = new Body() { AdjustMask = Vector2.UnitY, Size = size };
-            _elevatorBottom = new Body() { AdjustMask = Vector2.UnitY, Size = size };
+            _elevatorTop = new FloorBody() { Size = size };
+            _elevatorBottom = new FloorBody() { Size = size };
             _distance = distance;
             Position = position;
 

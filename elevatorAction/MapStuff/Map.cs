@@ -13,7 +13,6 @@ namespace elevatorAction
     {
         Empty,
         Floor,
-        FloorWall,
         Hole,
         Wall
     }
@@ -59,13 +58,13 @@ namespace elevatorAction
         {
             this.game = game;
             Grid = new MapElement[,] { 
-                { MapElement.Wall, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.FloorWall, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.FloorWall,  MapElement.Floor,  MapElement.Floor,  MapElement.Floor, MapElement.Wall, MapElement.Wall },
+                { MapElement.Wall, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Floor,  MapElement.Floor,  MapElement.Floor,  MapElement.Floor, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.FloorWall, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.FloorWall,  MapElement.Floor,  MapElement.Floor,  MapElement.Floor, MapElement.Wall, MapElement.Wall },
+                { MapElement.Wall, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Floor,  MapElement.Floor,  MapElement.Floor,  MapElement.Floor, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
@@ -86,11 +85,6 @@ namespace elevatorAction
                             break;
                         case MapElement.Floor:
                             entityToAdd = new Floor(position);
-                            break;
-                        case MapElement.FloorWall:
-                            entityToAdd = new Floor(position);
-                            Entities.Add(entityToAdd);
-                            entityToAdd = new Wall(position + ((CellSize * Vector2.UnitY) / 3), CellSize - ((CellSize * Vector2.UnitY) / 3));
                             break;
                     }
                     if (entityToAdd != null)
