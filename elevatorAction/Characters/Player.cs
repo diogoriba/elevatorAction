@@ -1,4 +1,5 @@
 using elevatorAction.MapElements;
+using elevatorAction.MapStuff;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -154,7 +155,7 @@ namespace elevatorAction.Characters
             Vector2 tentativePosition = Body.Position;
             tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 2.4f);
             List<Entity> collidedWith = MoveTo(tentativePosition);
-            bool grounded = collidedWith.Any(entity => entity is Floor);
+            bool grounded = collidedWith.Any(entity => entity is Floor || entity is Elevator);
             bool walled = collidedWith.Any(entity => entity is Wall);
             if (grounded)
             {
@@ -177,7 +178,7 @@ namespace elevatorAction.Characters
         private List<Entity> MoveTo(Vector2 tentativePosition)
         {
             Body.Position = tentativePosition;
-            var wallsAndFloors = Map.Instance.Entities.Where(entity => entity is Wall || entity is Floor);
+            var wallsAndFloors = Map.Instance.Entities.Where(entity => entity is Wall || entity is Floor || entity is Elevator);
             var collidesWith = wallsAndFloors.Where(entity => entity.Body.Collides(Body)).ToList();
             var collidingBodies = collidesWith.Select(e => e.Body).ToList();
 

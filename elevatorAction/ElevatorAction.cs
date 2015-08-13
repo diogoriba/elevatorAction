@@ -12,7 +12,7 @@ namespace elevatorAction
     /// </summary>
     public class ElevatorAction : Game
     {
-        public static bool Jiggle = true;
+        public static bool Jiggle = false;
         public static bool Kerbal = true;
 
         GraphicsDeviceManager graphics;
@@ -44,7 +44,7 @@ namespace elevatorAction
             map.Entities.Add(player);
             map.Entities.Add(enemy);
 
-            map.Entities.Add(new Elevator(new Point(11, 0), 3));
+            map.Entities.Add(new Elevator(new Point(10, 0), 3));
 
             map.Initialize(this);
 

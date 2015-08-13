@@ -10,7 +10,8 @@ namespace elevatorAction.MapElements
     public class Wall : Entity
     {
         private Texture2D wallTexture;
-        public Wall(Vector2 initialPosition) : base(initialPosition, Map.Instance.CellSize)
+        public Wall(Vector2 initialPosition)
+            : base(initialPosition, Map.Instance.CellSize)
         {
         }
 
@@ -21,12 +22,12 @@ namespace elevatorAction.MapElements
 
         public override void Draw(Microsoft.Xna.Framework.GameTime gameTime, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(wallTexture, new Rectangle(Body.Position.ToPoint(), Body.Size.ToPoint()), Color.White);
+            spriteBatch.Draw(wallTexture, new Rectangle(Body.Position.ToPoint().X, Body.Position.ToPoint().Y, Body.Size.ToPoint().X, Body.Size.ToPoint().Y), Color.White);
         }
 
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
         {
-            
+
         }
 
         public override void Initialize(Game game)

@@ -42,7 +42,7 @@ namespace elevatorAction
 
         
         private Texture2D holeTexture;
-        private Game game;
+        public Game game;
 
         private Map()
         {
@@ -59,6 +59,7 @@ namespace elevatorAction
         {
             this.game = game;
             Grid = new MapElement[,] { 
+                { MapElement.Wall, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.FloorWall, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.FloorWall,  MapElement.Floor,  MapElement.Floor,  MapElement.Floor, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
                 { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },

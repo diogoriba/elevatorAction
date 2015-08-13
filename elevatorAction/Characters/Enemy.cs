@@ -49,7 +49,7 @@ namespace elevatorAction.Characters
             if (elapsedSeconds > 2)
             {
                 elapsedSeconds = 0;
-                bulletPool.CreateBullet();
+                //bulletPool.CreateBullet();
             }
         }
     }

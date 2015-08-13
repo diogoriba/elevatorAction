@@ -12,24 +12,19 @@ namespace elevatorAction.MapStuff
     {
         private Texture2D _elevatorTexture;
 
-        private readonly int FLOOR_SIZE = 6;
+        private int FLOOR_SIZE = 6;
 
         private Point _shaftTop;
+        
         private int _shaftSize;
 
+
+        private Vector2 _elevatorStartPosition;
         private int _positionNow;
         
-        private Point PointNow
-        {
-            get
-            {
-                return _shaftTop + new Point(0, _positionNow);
-            }
-        }
-        
-        private int _elevatorStartIndex;
+        //private int _elevatorStartIndex;
 
-        private readonly Vector2 ELEVATOR_SIZE = new Vector2(3, 1);
+        private readonly Vector2 ELEVATOR_SIZE = new Vector2(4, 1);
 
         private float _timeStoped = 0f;
         private float _timeLimit = 2f;
@@ -37,27 +32,21 @@ namespace elevatorAction.MapStuff
         private bool _movingUp = false;
         private int _target;
 
-        public Elevator(Point shaftTop, int shaftSize)
+        public Elevator(Point shaftTop, int numberOfFloors)
             : base()
         {
             FLOOR_SIZE = 6 * (int)Map.Instance.CellSize.Y;
-            shaftSize *= FLOOR_SIZE;
+            if (numberOfFloors <= 1) numberOfFloors = 2; //MIN VALUE //LARGE VALUE = BOOM
+
             _shaftTop = shaftTop;
-
-            if (shaftSize <= FLOOR_SIZE) shaftSize = 2 * FLOOR_SIZE; //MIN VALUE //LARGE VALUE = BOOM
-
-            _elevatorStartIndex = 0;
-            _shaftSize = shaftSize;
-            _positionNow = _elevatorStartIndex;
-
-            //var cellSize = Map.Instance.CellSize;
-            //Body = new ElevatorBody(PointNow.ToVector2() * cellSize, ELEVATOR_SIZE * cellSize);
-            //Body.Position = PointNow.ToVector2() * cellSize;
+            _elevatorStartPosition = _shaftTop.ToVector2() * Map.Instance.CellSize;
+            _shaftSize = numberOfFloors * FLOOR_SIZE;
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_elevatorTexture, Body.Position, Color.White);
+            spriteBatch.Draw(_elevatorTexture, position: Body.Position, color: Color.White, scale: new Vector2(Map.SCALE, Map.SCALE));
+            //(Body as ElevatorBody).DebugDraw(spriteBatch);
         }
 
         public override void Update(GameTime gameTime)
@@ -143,7 +132,7 @@ namespace elevatorAction.MapStuff
                 limitDown = positionSelf.Y;
             }
 
-            float temp = positionSelf.Y + (direction * (float)gameTime.ElapsedGameTime.TotalSeconds);
+            float temp = positionSelf.Y + (direction * (float)gameTime.ElapsedGameTime.TotalSeconds * Map.Instance.CellSize.Y);
             temp = MathHelper.Clamp(temp, limitDown, limitUp);
             positionSelf.Y = temp;
 
@@ -180,11 +169,14 @@ namespace elevatorAction.MapStuff
         public override void Initialize(Game game)
         {
             base.Initialize(game);
-            //_elevatorTexture = game.Content.Load<Texture2D>("elevator");
+            _elevatorTexture = game.Content.Load<Texture2D>("elevator");
+            /* 
             Vector2 size = ELEVATOR_SIZE * Map.Instance.CellSize;
             _elevatorTexture = new Texture2D(game.GraphicsDevice, (int)size.X, (int)size.Y);
             _elevatorTexture.SetData(Enumerable.Repeat(Color.Red, (int)size.X * (int)size.Y).ToArray());
-            Body = new ElevatorBody(PointNow.ToVector2() * Map.Instance.CellSize, ELEVATOR_SIZE * Map.Instance.CellSize);
+            //*/
+            Body = new ElevatorBody(_elevatorStartPosition, ELEVATOR_SIZE * Map.Instance.CellSize, FLOOR_SIZE);
+            _positionNow = (int)_elevatorStartPosition.Y;
         }
     }
 }
