@@ -37,14 +37,14 @@ namespace elevatorAction
             map = Map.Instance;
             map.Entities.Clear();
 
-            Player player = new Player(new Vector2(2, 0) * map.CellSize);
-            Enemy enemy = new Enemy(new Vector2(7, 2) * map.CellSize);
+            Player player = new Player(new Vector2(5, 0) * map.CellSize);
+            Enemy enemy = new Enemy(new Vector2(9, 4) * map.CellSize);
 
             map.Entities.Add(new Camera());
             map.Entities.Add(player);
             map.Entities.Add(enemy);
 
-            map.Entities.Add(new Elevator(new Point(10, 0), 3));
+            map.Entities.Add(new Elevator(new Point(14, 1), 3));
 
             map.Initialize(this);
 

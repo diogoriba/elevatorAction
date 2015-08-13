@@ -6,17 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TiledSharp;
 
 namespace elevatorAction
 {
-    public enum MapElement
-    {
-        Empty,
-        Floor,
-        Hole,
-        Wall
-    }
-
     public class Map : ICanDraw, ICanUpdate
     {
         private static Map instance = new Map();
@@ -35,12 +28,9 @@ namespace elevatorAction
         public const int CELL_SIZE = 8;
         public const int SCALE = 3;
 
-        public MapElement[,] Grid { get; private set; }
         public List<Entity> Entities { get; private set; }
         public Vector2 CellSize { get; private set; }
 
-        
-        private Texture2D holeTexture;
         public Game game;
 
         private Map()
@@ -57,45 +47,30 @@ namespace elevatorAction
         public void Initialize(Game game)
         {
             this.game = game;
-            Grid = new MapElement[,] { 
-                { MapElement.Wall, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Floor,  MapElement.Floor,  MapElement.Floor,  MapElement.Floor, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Hole, MapElement.Hole, MapElement.Hole, MapElement.Hole,      MapElement.Floor,  MapElement.Floor,  MapElement.Floor,  MapElement.Floor, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty, MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty,  MapElement.Empty, MapElement.Wall, MapElement.Wall },
-                { MapElement.Wall, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor, MapElement.Floor,  MapElement.Floor,  MapElement.Floor,  MapElement.Floor,  MapElement.Floor, MapElement.Wall, MapElement.Wall },
-            };
-            for (int line = 0; line < this.Grid.GetLength(0); line++)
+            TmxMap map = new TmxMap("Content/elevatorActionMap.tmx");
+            for (var i = 0; i < map.Layers[0].Tiles.Count; i++)
             {
-                for (int column = 0; column < this.Grid.GetLength(1); column++)
+                int gid = map.Layers[0].Tiles[i].Gid;
+                if (gid != 0)
                 {
-                    Entity entityToAdd = null;
-                    Vector2 position = new Vector2(column * CellSize.X, line * CellSize.Y);
-                    switch (Grid[line, column])
+                    TmxTileset tileset = map.Tilesets.First(set => set.FirstGid == gid);
+                    float x = (i % map.Width);
+                    float y = (float)Math.Floor(i / (double)map.Width);
+                    Vector2 position = new Vector2(x, y) * CellSize;
+
+                    switch (tileset.Name)
                     {
-                        case MapElement.Wall:
-                            entityToAdd = new Wall(position);
+                        case "wall":
+                            Entities.Add(new Wall(position));
                             break;
-                        case MapElement.Floor:
-                            entityToAdd = new Floor(position);
+                        case "floor":
+                            Entities.Add(new Floor(position));
                             break;
-                    }
-                    if (entityToAdd != null)
-                    {
-                        Entities.Add(entityToAdd);
+                        default:
+                            break;
                     }
                 }
-            }
-
-            holeTexture = new Texture2D(game.GraphicsDevice, (int)this.CellSize.X, (int)this.CellSize.Y);
-            holeTexture.SetData(Enumerable.Repeat(Color.Gray, (int)this.CellSize.X * (int)this.CellSize.Y).ToArray());            
+            }   
 
             Entities.ForEach(x => x.Initialize(game));
         }

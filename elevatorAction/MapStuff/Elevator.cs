@@ -24,7 +24,7 @@ namespace elevatorAction.MapStuff
         
         //private int _elevatorStartIndex;
 
-        private readonly Vector2 ELEVATOR_SIZE = new Vector2(4, 1);
+        private readonly Vector2 ELEVATOR_SIZE = new Vector2(3, 1);
 
         private float _timeStoped = 0f;
         private float _timeLimit = 2f;
