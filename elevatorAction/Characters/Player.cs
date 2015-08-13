@@ -64,7 +64,7 @@ namespace elevatorAction.Characters
 
         private void CheckIfShot()
         {
-            var bullets = Map.Instance.Entities.Where(entity => entity is Bullet).Select(entity => entity as Bullet).ToList();
+            var bullets = Map.Instance.Camera.Entities.Where(entity => entity is Bullet).Select(entity => entity as Bullet).ToList();
             var collidingBullets = bullets.Where(bullet => bullet.Body.Collides(Body) && bullet.Owner.GetType() != this.GetType()).ToList();
             if (collidingBullets.Count > 0)
             {
@@ -196,7 +196,7 @@ namespace elevatorAction.Characters
         private List<Entity> MoveTo(Vector2 tentativePosition)
         {
             Body.Position = tentativePosition;
-            var wallsAndFloors = Map.Instance.Entities.Where(entity => entity is Wall || entity is Floor || entity is Elevator || entity is Stairs);
+            var wallsAndFloors = Map.Instance.Camera.Entities.Where(entity => entity is Wall || entity is Floor || entity is Elevator || entity is Stairs);
             var collidesWith = wallsAndFloors.Where(entity => entity.Body.Collides(Body)).ToList();
             var collidingBodies = collidesWith.Select(e => e.Body).ToList();
 

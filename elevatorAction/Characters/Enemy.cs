@@ -38,7 +38,7 @@ namespace elevatorAction.Characters
         public override void Update(GameTime gameTime)
         {
             bulletPool.Update(gameTime);
-            var bullets = Map.Instance.Entities.Where(entity => entity is Bullet).Select(entity => entity as Bullet).ToList();
+            var bullets = Map.Instance.Camera.Entities.Where(entity => entity is Bullet).Select(entity => entity as Bullet).ToList();
             var collidingBullets = bullets.Where(bullet => bullet.Body.Collides(Body) && bullet.Owner.GetType() != this.GetType()).ToList();
             if (collidingBullets.Count > 0)
             {

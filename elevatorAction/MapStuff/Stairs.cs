@@ -31,7 +31,7 @@ namespace elevatorAction.MapElements
 
         public void Go(Body body)
         {
-            Stairs destination = Map.Instance.Entities.FindAll(entity => entity is Stairs).Select(entity => entity as Stairs).Where(stairs => stairs.Name == _to).First();
+            Stairs destination = Map.Instance.Camera.Entities.FindAll(entity => entity is Stairs).Select(entity => entity as Stairs).Where(stairs => stairs.Name == _to).First();
             body.Position = destination.Body.Position;
         }
 

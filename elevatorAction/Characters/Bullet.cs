@@ -72,7 +72,7 @@ namespace elevatorAction.Characters
         private List<Entity> MoveTo(Vector2 tentativePosition)
         {
             Body.Position = tentativePosition;
-            var collidable = Map.Instance.Entities.Where(entity => entity is Wall || entity is Player || entity is Enemy);
+            var collidable = Map.Instance.Camera.Entities.Where(entity => entity is Wall || entity is Player || entity is Enemy);
             var collidesWith = collidable.Where(entity => entity.Body.Collides(Body)).ToList();
             return collidesWith;
         }

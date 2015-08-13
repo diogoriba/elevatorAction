@@ -30,6 +30,7 @@ namespace elevatorAction
 
         public List<Entity> Entities { get; private set; }
         public Vector2 CellSize { get; private set; }
+        public Camera Camera { get; set; }
 
         public Game game;
 

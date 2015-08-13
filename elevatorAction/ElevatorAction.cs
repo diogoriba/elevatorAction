@@ -39,8 +39,8 @@ namespace elevatorAction
 
             Player player = new Player(new Vector2(5, 2) * map.CellSize);
             Enemy enemy = new Enemy(new Vector2(9, 4) * map.CellSize);
-
-            map.Entities.Add(new Camera());
+            map.Camera = new Camera();
+            map.Entities.Add(map.Camera);
             map.Entities.Add(player);
             map.Entities.Add(enemy);
 
