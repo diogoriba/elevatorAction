@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="188" tilewidth="8" tileheight="8" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="188" tilewidth="8" tileheight="8" nextobjectid="15">
  <tileset firstgid="1" name="numbers" tilewidth="8" tileheight="8">
-  <image source="numbers.png" width="132" height="50"/>
+  <image source="../../../../../Desktop/elevatorAction/numbers.png" width="132" height="50"/>
+  <tile id="0">
+   <properties>
+    <property name="id" value="S1"/>
+   </properties>
+  </tile>
  </tileset>
  <tileset firstgid="97" name="floor" tilewidth="8" tileheight="8">
-  <image source="floor.png" width="8" height="8"/>
+  <image source="../../../../../Desktop/elevatorAction/floor.png" width="8" height="8"/>
  </tileset>
  <tileset firstgid="98" name="wall" tilewidth="8" tileheight="8">
-  <image source="wall.png" width="8" height="8"/>
+  <image source="../../../../../Desktop/elevatorAction/wall.png" width="8" height="8"/>
  </tileset>
- <layer name="Camada de Tiles 1" width="32" height="188">
+ <layer name="terrain" width="32" height="188">
   <data>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -6029,4 +6034,16 @@
    <tile gid="97"/>
   </data>
  </layer>
+ <objectgroup name="objects">
+  <object id="13" name="S1" type="stairs" gid="1" x="48" y="64" width="8" height="32">
+   <properties>
+    <property name="to" value="S2"/>
+   </properties>
+  </object>
+  <object id="14" name="S2" type="stairs" gid="1" x="64" y="112" width="8" height="32">
+   <properties>
+    <property name="to" value="S1"/>
+   </properties>
+  </object>
+ </objectgroup>
 </map>

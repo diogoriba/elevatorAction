@@ -43,9 +43,11 @@
     <Compile Include="Framework\Body.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Framework\ElevatorBody.cs" />
+    <Compile Include="Framework\NonSolidBody.cs" />
     <Compile Include="MapStuff\Elevator.cs" />
     <Compile Include="MapStuff\Floor.cs" />
     <Compile Include="MapStuff\Map.cs" />
+    <Compile Include="MapStuff\Stairs.cs" />
     <Compile Include="MapStuff\Wall.cs" />
     <Compile Include="Characters\Player.cs" />
     <Compile Include="Framework\Entity.cs" />

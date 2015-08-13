@@ -82,7 +82,16 @@ namespace elevatorAction.Characters
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (Input.KeyWasPressed(Keys.Up))
             {
-                BeginJumping(gameTime);
+                var collidesWith = MoveTo(Body.Position);
+                Stairs stairs = collidesWith.FirstOrDefault(entity => entity is Stairs) as Stairs;
+                if (stairs != null)
+                {
+                    stairs.Go(Body);
+                }
+                else
+                {
+                    BeginJumping(gameTime);
+                }
             }
             else
             {
@@ -187,7 +196,7 @@ namespace elevatorAction.Characters
         private List<Entity> MoveTo(Vector2 tentativePosition)
         {
             Body.Position = tentativePosition;
-            var wallsAndFloors = Map.Instance.Entities.Where(entity => entity is Wall || entity is Floor || entity is Elevator);
+            var wallsAndFloors = Map.Instance.Entities.Where(entity => entity is Wall || entity is Floor || entity is Elevator || entity is Stairs);
             var collidesWith = wallsAndFloors.Where(entity => entity.Body.Collides(Body)).ToList();
             var collidingBodies = collidesWith.Select(e => e.Body).ToList();
 

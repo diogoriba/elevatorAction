@@ -48,9 +48,9 @@ namespace elevatorAction
         {
             this.game = game;
             TmxMap map = new TmxMap("Content/elevatorActionMap.tmx");
-            for (var i = 0; i < map.Layers[0].Tiles.Count; i++)
+            for (var i = 0; i < map.Layers["terrain"].Tiles.Count; i++)
             {
-                int gid = map.Layers[0].Tiles[i].Gid;
+                int gid = map.Layers["terrain"].Tiles[i].Gid;
                 if (gid != 0)
                 {
                     TmxTileset tileset = map.Tilesets.First(set => set.FirstGid == gid);
@@ -70,7 +70,25 @@ namespace elevatorAction
                             break;
                     }
                 }
-            }   
+            }
+            foreach (TiledSharp.TmxObjectGroup.TmxObject mapObject in map.ObjectGroups["objects"].Objects)
+            {
+                float width = (float)(mapObject.Width * SCALE);
+                float height = (float)(mapObject.Height * SCALE);
+                float x = (float)(mapObject.X * SCALE);
+                float y = (float)(mapObject.Y * SCALE) - height;
+                Vector2 position = new Vector2(x, y);
+                Vector2 size = new Vector2(width, height);
+
+                switch (mapObject.Type)
+                {
+                    case "stairs":
+                        Entities.Add(new Stairs(mapObject.Name, mapObject.Properties["to"], position, size));
+                        break;
+                    default:
+                        break;
+                }
+            }
 
             Entities.ForEach(x => x.Initialize(game));
         }
