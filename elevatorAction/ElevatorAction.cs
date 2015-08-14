@@ -14,7 +14,7 @@ namespace elevatorAction
     /// </summary>
     public class ElevatorAction : Game
     {
-        public static bool Jiggle = false;
+        public static bool Jiggle = true;
         public static bool Kerbal = false;
         public static bool Voxels = false;
 
