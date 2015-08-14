@@ -1,4 +1,6 @@
 using elevatorAction.Characters;
+using elevatorAction.Framework;
+using elevatorAction.MapElements;
 using elevatorAction.MapStuff;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -40,6 +42,8 @@ namespace elevatorAction
             Player player = new Player(new Vector2(5, 2) * map.CellSize);
             Enemy enemy = new Enemy(new Vector2(9, 4) * map.CellSize);
             map.Camera = new Camera();
+            map.Player = player;
+
             map.Entities.Add(map.Camera);
             map.Entities.Add(player);
             map.Entities.Add(enemy);
@@ -102,7 +106,7 @@ namespace elevatorAction
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Map.Instance.Camera.TransformMatrix);
 
             map.Draw(gameTime, spriteBatch);
 

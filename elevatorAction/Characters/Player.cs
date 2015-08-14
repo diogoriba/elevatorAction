@@ -12,18 +12,28 @@ namespace elevatorAction.Characters
 {
     public class Player : Entity
     {
-        enum State // player
+        public enum PlayerState // player
         {
             Walking,
             Jumping,
+            Crouching,
             Falling,
-            FallingHole
+            FallingHole,
+            EnteringStairs,
+            LeavingStairs
         }
 
-        private readonly Vector2 PLAYER_SIZE_BASE = new Vector2() { X = 2, Y = 3 };
+        private readonly Vector2 PLAYER_SIZE_BASE = new Vector2(2, 3);
+        private readonly Vector2 PLAYER_SIZE_CROUCHING = new Vector2(2, 2);
         private Texture2D _playerTexture;
         private BulletPool bulletPool;
-        private State _currentState = State.Walking;
+        private PlayerState _currentState;
+
+        public PlayerState CurrentState
+        {
+            get { return _currentState; }
+            set { _currentState = value; }
+        }
 
         public Player(Vector2 startPosition)
             : base(startPosition)
@@ -34,7 +44,7 @@ namespace elevatorAction.Characters
         {
             Vector2 position = Body.Position;
 
-            spriteBatch.Draw(_playerTexture, position, Color.White);
+            spriteBatch.Draw(_playerTexture, position, Color.White * _opacity);
         }
 
         public override void Update(GameTime gameTime)
@@ -43,19 +53,25 @@ namespace elevatorAction.Characters
             CheckIfShot();
             switch (_currentState)
             {
-                case State.Walking:
+                case PlayerState.Walking:
                     Walking(gameTime);
                     Shoot(gameTime);
                     break;
-                case State.Jumping:
+                case PlayerState.Jumping:
                     Jumping(gameTime);
                     Shoot(gameTime);
                     break;
-                case State.Falling:
+                case PlayerState.Falling:
                     Falling(gameTime);
                     Shoot(gameTime);
                     break;
-                case State.FallingHole:
+                case PlayerState.FallingHole:
+                    break;
+                case PlayerState.EnteringStairs:
+                    EnterStairs(gameTime);
+                    break;
+                case PlayerState.LeavingStairs:
+                    LeaveStairs(gameTime);
                     break;
                 default:
                     break;
@@ -74,7 +90,47 @@ namespace elevatorAction.Characters
 
         private void BeginWalking()
         {
-            _currentState = State.Walking;
+            _currentState = PlayerState.Walking;
+        }
+
+        private float _timeToVanish = 1f;
+        private float _stairsTimer;
+        private float _opacity = 1f;
+        private Stairs _stairsToGo;
+        private void BeginEnterStairs(Stairs stairs)
+        {
+            _stairsToGo = stairs;
+            _stairsTimer = 0;
+            _currentState = PlayerState.EnteringStairs;
+        }
+
+        private void EnterStairs(GameTime gameTime)
+        {
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            _opacity = MathHelper.Lerp(1, 0, _stairsTimer / _timeToVanish);
+            _stairsTimer += deltaTime;
+            if (_stairsTimer >= _timeToVanish)
+            {
+                BeginLeaveStairs();
+            }
+        }
+
+        private void BeginLeaveStairs()
+        {
+            _stairsTimer = 0;
+            _currentState = PlayerState.LeavingStairs;
+            _stairsToGo.Go(Body);
+        }
+
+        private void LeaveStairs(GameTime gameTime)
+        {
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            _opacity = MathHelper.Lerp(0, 1, _stairsTimer / _timeToVanish);
+            _stairsTimer += deltaTime;
+            if (_stairsTimer >= _timeToVanish)
+            {
+                BeginWalking();
+            }
         }
 
         private void Walking(GameTime gameTime)
@@ -86,7 +142,7 @@ namespace elevatorAction.Characters
                 Stairs stairs = collidesWith.FirstOrDefault(entity => entity is Stairs) as Stairs;
                 if (stairs != null)
                 {
-                    stairs.Go(Body);
+                    BeginEnterStairs(stairs);
                 }
                 else
                 {
@@ -126,7 +182,7 @@ namespace elevatorAction.Characters
         private void BeginJumping(GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            _currentState = State.Jumping;
+            _currentState = PlayerState.Jumping;
             _elapsedJumpTime = 0;
             Body.Orientation = (Body.Orientation * Vector2.UnitX) + new Vector2(0, -1);
             Jumping(gameTime, true);
@@ -157,7 +213,7 @@ namespace elevatorAction.Characters
 
         private void BeginFalling(GameTime gameTime)
         {
-            _currentState = State.Falling;
+            _currentState = PlayerState.Falling;
             Body.Orientation = (Body.Orientation * Vector2.UnitX) + new Vector2(0, 1);
             Falling(gameTime);
         }
@@ -208,6 +264,7 @@ namespace elevatorAction.Characters
         {
             _initialSize = PLAYER_SIZE_BASE * Map.Instance.CellSize;
             base.Initialize(game);
+            BeginWalking();
             _playerTexture = new Texture2D(game.GraphicsDevice, (int)Body.Size.X, (int)Body.Size.Y);
             _playerTexture.SetData(Enumerable.Repeat(Color.White, (int)Body.Size.X * (int)Body.Size.Y).ToArray());
             bulletPool = new BulletPool(game, this, 3);

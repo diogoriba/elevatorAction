@@ -1,3 +1,4 @@
+using elevatorAction.Characters;
 using elevatorAction.MapElements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -31,8 +32,12 @@ namespace elevatorAction
         public List<Entity> Entities { get; private set; }
         public Vector2 CellSize { get; private set; }
         public Camera Camera { get; set; }
+        public Player Player { get; set; }
 
-        public Game game;
+        public int Width { get; set; }
+        public int Height { get; set; }
+
+        public Game _game;
 
         private Map()
         {
@@ -47,8 +52,11 @@ namespace elevatorAction
 
         public void Initialize(Game game)
         {
-            this.game = game;
+            this._game = game;
             TmxMap map = new TmxMap("Content/elevatorActionMap.tmx");
+            Width = (int)(map.Width * CellSize.X);
+            Height = (int)(map.Height * CellSize.Y);
+
             for (var i = 0; i < map.Layers["terrain"].Tiles.Count; i++)
             {
                 int gid = map.Layers["terrain"].Tiles[i].Gid;
@@ -72,6 +80,7 @@ namespace elevatorAction
                     }
                 }
             }
+            
             foreach (TiledSharp.TmxObjectGroup.TmxObject mapObject in map.ObjectGroups["objects"].Objects)
             {
                 float width = (float)(mapObject.Width * SCALE);
