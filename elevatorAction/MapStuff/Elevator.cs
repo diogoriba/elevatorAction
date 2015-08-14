@@ -18,7 +18,7 @@ namespace elevatorAction.MapStuff
 
         private int _shaftSize;
 
-        private bool _turbo = true;
+        private bool _turbo = false;
 
 
         private Vector2 _elevatorStartPosition;
@@ -120,7 +120,7 @@ namespace elevatorAction.MapStuff
 
             float limitUp = 0;
             float limitDown = 0;
-            float direction = 1;
+            float direction = 4;
 
             if (positionSelf.Y > positionTarget.Y)
             {

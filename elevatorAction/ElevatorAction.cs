@@ -40,7 +40,7 @@ namespace elevatorAction
             map.Entities.Clear();
 
             Vector2 startPosition = new Vector2(5, 2);
-            startPosition = new Vector2(16, 79);
+            //startPosition = new Vector2(14, 151);
 
             Player player = new Player(startPosition * map.CellSize);
             Enemy enemy = new Enemy(new Vector2(9, 4) * map.CellSize);
@@ -56,7 +56,24 @@ namespace elevatorAction
             //map.Entities.Add(new Elevator(new Point(2, 7), 2));
 
             map.Entities.Add(new Elevator(new Point(14, 1), 11));
+
             map.Entities.Add(new Elevator(new Point(14, 79), 2));
+
+            map.Entities.Add(new Elevator(new Point(2, 91), 2));
+
+            map.Entities.Add(new Elevator(new Point(26, 103), 6));
+
+            map.Entities.Add(new Elevator(new Point(14, 109), 2));
+
+            map.Entities.Add(new Elevator(new Point(2, 115), 4));
+
+            map.Entities.Add(new Elevator(new Point(10, 139), 6));
+            map.Entities.Add(new Elevator(new Point(18, 139), 6));
+            map.Entities.Add(new Elevator(new Point(22, 139), 7));
+
+            map.Entities.Add(new Elevator(new Point(6, 145), 5));
+
+            map.Entities.Add(new Elevator(new Point(14, 151), 4));
             
 
             map.Initialize(this);

@@ -137,12 +137,15 @@ namespace elevatorAction.Characters
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            bool controlingElevator = false;
+
             if (Input.IsKeyDown(Keys.Down) || Input.IsKeyDown(Keys.Up))
             {
                 var collidesWith = MoveTo(Body.Position + Vector2.UnitY * 8f);
                 Elevator elevator = collidesWith.FirstOrDefault(entity => entity is Elevator) as Elevator;
                 if (elevator != null && collidesWith.Count == 1)
                 {
+                    controlingElevator = true;
                     if (Input.IsKeyDown(Keys.Down))
                     {
                         elevator.MoveDown();
@@ -153,7 +156,8 @@ namespace elevatorAction.Characters
                     }
                 }
             }
-            else if (Input.KeyWasPressed(Keys.Up))
+
+            if (Input.KeyWasPressed(Keys.Up) && !controlingElevator)
             {
                 var collidesWith = MoveTo(Body.Position + Vector2.UnitY * 8f);
                 Stairs stairs = collidesWith.FirstOrDefault(entity => entity is Stairs) as Stairs;
