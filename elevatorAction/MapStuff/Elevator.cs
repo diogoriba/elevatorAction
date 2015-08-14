@@ -18,7 +18,7 @@ namespace elevatorAction.MapStuff
 
         private int _shaftSize;
 
-        private bool _turbo = false;
+        private bool _turbo = true;
 
 
         private Vector2 _elevatorStartPosition;
