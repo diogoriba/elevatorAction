@@ -136,9 +136,26 @@ namespace elevatorAction.Characters
         private void Walking(GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            if (Input.KeyWasPressed(Keys.Up))
+
+            if (Input.IsKeyDown(Keys.Down) || Input.IsKeyDown(Keys.Up))
             {
-                var collidesWith = MoveTo(Body.Position);
+                var collidesWith = MoveTo(Body.Position + Vector2.UnitY * 8f);
+                Elevator elevator = collidesWith.FirstOrDefault(entity => entity is Elevator) as Elevator;
+                if (elevator != null && collidesWith.Count == 1)
+                {
+                    if (Input.IsKeyDown(Keys.Down))
+                    {
+                        elevator.MoveDown();
+                    }
+                    else
+                    {
+                        elevator.MoveUp();
+                    }
+                }
+            }
+            else if (Input.KeyWasPressed(Keys.Up))
+            {
+                var collidesWith = MoveTo(Body.Position + Vector2.UnitY * 8f);
                 Stairs stairs = collidesWith.FirstOrDefault(entity => entity is Stairs) as Stairs;
                 if (stairs != null)
                 {

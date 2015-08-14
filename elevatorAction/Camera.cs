@@ -23,6 +23,8 @@ namespace elevatorAction
         {
             base.Initialize(game);
             Entities = new List<Entity>();
+
+            Body.Position = new Vector2(Body.Position.X, Map.Instance.Player.Body.Position.Y);
         }
 
         public Matrix TransformMatrix

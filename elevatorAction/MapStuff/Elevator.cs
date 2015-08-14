@@ -15,13 +15,15 @@ namespace elevatorAction.MapStuff
         private int FLOOR_SIZE = 6;
 
         private Point _shaftTop;
-        
+
         private int _shaftSize;
+
+        private bool _turbo = true;
 
 
         private Vector2 _elevatorStartPosition;
         private int _positionNow;
-        
+
         //private int _elevatorStartIndex;
 
         private readonly Vector2 ELEVATOR_SIZE = new Vector2(3, 1);
@@ -57,7 +59,7 @@ namespace elevatorAction.MapStuff
             }
             else
             {
-                _timeStoped += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _timeStoped += (float)gameTime.ElapsedGameTime.TotalSeconds * ((_turbo) ? 3f : 1f);
                 if (_timeStoped >= _timeLimit)
                 {
                     //timeStoped = 0f;
@@ -91,12 +93,12 @@ namespace elevatorAction.MapStuff
 
         private bool CanMoveDown()
         {
-            return _positionNow < _shaftSize - FLOOR_SIZE;
+            return _positionNow < _elevatorStartPosition.Y + _shaftSize;
         }
 
         private bool CanMoveUp()
         {
-            return _positionNow > 0;
+            return _positionNow > _elevatorStartPosition.Y;
         }
 
         private bool MovingUp()
@@ -107,7 +109,7 @@ namespace elevatorAction.MapStuff
         private void ExecuteMove(GameTime gameTime)
         {
             Vector2 positionSelf = Body.Position;
-            Vector2 positionTarget = (_shaftTop + new Point(0, _target)).ToVector2();
+            Vector2 positionTarget = new Vector2(_elevatorStartPosition.X, _target);
 
             if (positionSelf.Y == positionTarget.Y)
             {
@@ -132,7 +134,7 @@ namespace elevatorAction.MapStuff
                 limitDown = positionSelf.Y;
             }
 
-            float temp = positionSelf.Y + (direction * (float)gameTime.ElapsedGameTime.TotalSeconds * Map.Instance.CellSize.Y);
+            float temp = positionSelf.Y + (direction * (float)gameTime.ElapsedGameTime.TotalSeconds * Map.Instance.CellSize.Y * ((_turbo) ? 5f : 1f));
             temp = MathHelper.Clamp(temp, limitDown, limitUp);
             positionSelf.Y = temp;
 
@@ -163,7 +165,7 @@ namespace elevatorAction.MapStuff
 
         private void SetTarget(int x)
         {
-            _target = MathHelper.Clamp(x, 0, _shaftSize - FLOOR_SIZE);
+            _target = MathHelper.Clamp(x, (int)_elevatorStartPosition.Y, (int)_elevatorStartPosition.Y + (int)_shaftSize);
         }
 
         public override void Initialize(Game game)

@@ -25,7 +25,7 @@ namespace elevatorAction.Framework
             _distance = distance;
             Position = position;
 
-            _debugTexture = new Texture2D(Map.Instance.game.GraphicsDevice, 1, 1);
+            _debugTexture = new Texture2D(Map.Instance._game.GraphicsDevice, 1, 1);
             _debugTexture.SetData<Color>(new Color[] { Color.White });
         }
 

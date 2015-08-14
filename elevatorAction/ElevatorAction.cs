@@ -39,18 +39,29 @@ namespace elevatorAction
             map = Map.Instance;
             map.Entities.Clear();
 
-            Player player = new Player(new Vector2(5, 2) * map.CellSize);
+            Vector2 startPosition = new Vector2(5, 2);
+            startPosition = new Vector2(16, 79);
+
+            Player player = new Player(startPosition * map.CellSize);
             Enemy enemy = new Enemy(new Vector2(9, 4) * map.CellSize);
             map.Camera = new Camera();
             map.Player = player;
 
-            map.Entities.Add(map.Camera);
+            
             map.Entities.Add(player);
+            map.Entities.Add(map.Camera);
             map.Entities.Add(enemy);
 
-            map.Entities.Add(new Elevator(new Point(14, 1), 3));
+            //DEBUG ELEVATOR
+            //map.Entities.Add(new Elevator(new Point(2, 7), 2));
+
+            map.Entities.Add(new Elevator(new Point(14, 1), 11));
+            map.Entities.Add(new Elevator(new Point(14, 79), 2));
+            
 
             map.Initialize(this);
+
+            //player.Body.Position = new Vector2(412, 1968);
 
             base.Initialize();
             //*/
