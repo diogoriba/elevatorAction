@@ -15,7 +15,8 @@ namespace elevatorAction
     public class ElevatorAction : Game
     {
         public static bool Jiggle = false;
-        public static bool Kerbal = true;
+        public static bool Kerbal = false;
+        public static bool Voxels = false;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -43,7 +44,7 @@ namespace elevatorAction
             //startPosition = new Vector2(14, 151);
 
             Player player = new Player(startPosition * map.CellSize);
-            Enemy enemy = new Enemy(new Vector2(9, 4) * map.CellSize);
+            Enemy enemy = new Enemy(new Vector2(18, 4) * map.CellSize);
             map.Camera = new Camera();
             map.Player = player;
 

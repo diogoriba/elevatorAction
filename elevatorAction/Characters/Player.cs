@@ -81,9 +81,10 @@ namespace elevatorAction.Characters
         private void CheckIfShot()
         {
             var bullets = Map.Instance.Camera.Entities.Where(entity => entity is Bullet).Select(entity => entity as Bullet).ToList();
-            var collidingBullets = bullets.Where(bullet => bullet.Body.Collides(Body) && bullet.Owner.GetType() != this.GetType()).ToList();
+            var collidingBullets = bullets.Where(bullet => Body.Collides(bullet.Body) && bullet.Owner.GetType() != this.GetType()).ToList();
             if (collidingBullets.Count > 0)
             {
+                collidingBullets.ForEach(bullet => bullet.Dead = true); // KLUDGE -- bullet doesn't die if you strafe left
                 Dead = true;
             }
         }
@@ -102,6 +103,7 @@ namespace elevatorAction.Characters
             _stairsToGo = stairs;
             _stairsTimer = 0;
             _currentState = PlayerState.EnteringStairs;
+            Body.CollisionsEnabled = false;
         }
 
         private void EnterStairs(GameTime gameTime)
@@ -129,6 +131,7 @@ namespace elevatorAction.Characters
             _stairsTimer += deltaTime;
             if (_stairsTimer >= _timeToVanish)
             {
+                Body.CollisionsEnabled = true;
                 BeginWalking();
             }
         }

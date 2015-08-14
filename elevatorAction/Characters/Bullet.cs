@@ -60,6 +60,11 @@ namespace elevatorAction.Characters
             List<Entity> collidesWith = MoveTo(Body.Position).Where(entity => entity.GetType() != Owner.GetType()).ToList();
             if (collidesWith.Count > 0)
             {
+                if (!ElevatorAction.Voxels)
+                {
+                    collidesWith = collidesWith.Where(entity => entity is Player || entity is Enemy).ToList();
+                }
+                collidesWith.ForEach(entity => entity.Dead = true);
                 Dead = true;
             }
 

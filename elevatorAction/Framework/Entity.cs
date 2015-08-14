@@ -21,7 +21,7 @@ namespace elevatorAction
         public Body Body { get; protected set; }
         public bool Active { get; protected set; }
         public bool Visible { get; protected set; }
-        public bool Dead { get; protected set; }
+        public bool Dead { get; set; }
 
         public abstract void Draw(GameTime gameTime, SpriteBatch spriteBatch);
         public abstract void Update(GameTime gameTime);

@@ -42,6 +42,7 @@ namespace elevatorAction
         }
         public Vector2 LastActiveOrientation { get; private set; }
         public Vector2 AdjustMask { get; set; }
+        public bool CollisionsEnabled { get; set; }
 
         public Rectangle CollisionRectangle
         {
@@ -56,11 +57,12 @@ namespace elevatorAction
             Position = position;
             Size = size;
             Orientation = Vector2.Zero;
+            CollisionsEnabled = true;
         }
 
         public virtual bool Collides(Body body)
         {
-            return this.CollisionRectangle.Intersects(body.CollisionRectangle);
+            return this.CollisionRectangle.Intersects(body.CollisionRectangle) && CollisionsEnabled;
         }
 
         protected virtual Vector2 GetAdjustMask(Rectangle collisionBox)
