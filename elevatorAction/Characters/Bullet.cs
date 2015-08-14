@@ -26,7 +26,7 @@ namespace elevatorAction.Characters
         {
             if (bullets.Count < MaxElements)
             {
-                Bullet newBullet = new Bullet(Owner, Owner.Body.Position + new Vector2(Map.Instance.CellSize.X / 2, Map.Instance.CellSize.Y));
+                Bullet newBullet = new Bullet(Owner, Owner.Body.Position + new Vector2(Map.Instance.CellSize.X / 2, Map.Instance.CellSize.Y - 2));
                 newBullet.Initialize(game);
                 bullets.Add(newBullet);
                 Map.Instance.Entities.Add(newBullet);

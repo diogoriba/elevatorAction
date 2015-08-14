@@ -1,5 +1,6 @@
 using elevatorAction.Characters;
 using elevatorAction.Framework;
+using elevatorAction.Graphics;
 using elevatorAction.MapElements;
 using elevatorAction.MapStuff;
 using Microsoft.Xna.Framework;
@@ -37,6 +38,9 @@ namespace elevatorAction
         protected override void Initialize()
         {
             //*
+            TexturePool.Instance.Game = this;
+            TexturePool.Instance.LoadAll();
+
             map = Map.Instance;
             map.Entities.Clear();
 

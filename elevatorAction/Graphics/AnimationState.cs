@@ -9,6 +9,6 @@ namespace elevatorAction.Graphics
     {
         public string Texture;
         //public Vector2 Location, Size; //se for utilizar spritesheet
-        public int Time;
+        public float Time;
     }
 }

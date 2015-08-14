@@ -18,5 +18,47 @@ namespace elevatorAction.Graphics
 
             return resp;
         }
+
+        public static Animation StandAnimation()
+        {
+            Animation resp = new Animation();
+
+            AddState(resp, TextureNames.PLAYER_S, 1);
+
+            return resp;
+        }
+
+        public static Animation WalkAnimation()
+        {
+            Animation resp = new Animation();
+
+            AddState(resp, TextureNames.PLAYER_S, 0.15f);
+            AddState(resp, TextureNames.PLAYER_W, 0.15f);
+
+            return resp;
+        }
+
+        public static Animation CrouchAnimation()
+        {
+            Animation resp = new Animation();
+
+            AddState(resp, TextureNames.PLAYER_C, 1f);
+
+            return resp;
+        }
+
+        public static Animation JumpingAnimation()
+        {
+            Animation resp = new Animation();
+
+            AddState(resp, TextureNames.PLAYER_J, 1f);
+
+            return resp;
+        }
+
+        private static void AddState(Animation a, string texture, float time)
+        {
+            a.States.Add(new AnimationState() { Texture = texture, Time = time });
+        }
     }
 }

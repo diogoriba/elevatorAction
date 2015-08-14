@@ -11,6 +11,8 @@ namespace elevatorAction.Graphics
     {
         public Game Game { get; set; }
 
+        public bool loaded = false;
+
         public Dictionary<string, Texture2D> Textures;
 
         private static TexturePool _instance;
@@ -31,11 +33,19 @@ namespace elevatorAction.Graphics
         public bool LoadAll()
         {
             if (Game == null) return false;
+            if (loaded) return false;
 
             //LoadTexture(TextureNames.TEST_1);
             //LoadTexture(TextureNames.TEST_2);
             //LoadTexture(TextureNames.TEST_3);
             //LoadTexture(TextureNames.TEST_4);
+
+            LoadTexture(TextureNames.PLAYER_S);
+            LoadTexture(TextureNames.PLAYER_W);
+            LoadTexture(TextureNames.PLAYER_C);
+            LoadTexture(TextureNames.PLAYER_J);
+
+            loaded = true;
 
             return true;
         }

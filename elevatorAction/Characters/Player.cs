@@ -1,3 +1,4 @@
+using elevatorAction.Graphics;
 using elevatorAction.MapElements;
 using elevatorAction.MapStuff;
 using Microsoft.Xna.Framework;
@@ -29,6 +30,11 @@ namespace elevatorAction.Characters
         private BulletPool bulletPool;
         private PlayerState _currentState;
 
+        private Animation _standAnimation;
+        private Animation _walkAnimation;
+        private Animation _crouchAnimation;
+        private Animation _jumpingAnimation;
+
         public PlayerState CurrentState
         {
             get { return _currentState; }
@@ -40,11 +46,49 @@ namespace elevatorAction.Characters
         {
         }
 
+        private Texture2D GetFrameTexture()
+        {
+            if (_currentState == PlayerState.Walking)
+            {
+                if (Body.Orientation.X == 0)
+                {
+                    return _standAnimation.Texture;
+                }
+                else
+                {
+                    return _walkAnimation.Texture;
+                }
+            }
+
+            if(_currentState == PlayerState.EnteringStairs || _currentState == PlayerState.LeavingStairs)
+            {
+                return _standAnimation.Texture;
+            }
+
+            if (_currentState == PlayerState.Crouching)
+            {
+                return _crouchAnimation.Texture;
+            }
+
+            if(_currentState == PlayerState.Jumping || _currentState == PlayerState.Falling)
+            {
+                return _jumpingAnimation.Texture;
+            }
+
+            return _playerTexture;
+        }
+
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             Vector2 position = Body.Position;
 
-            spriteBatch.Draw(_playerTexture, new Rectangle((int)position.X, (int)position.Y, (int)Body.Size.X, (int)Body.Size.Y), Color.White * _opacity);
+            var effect = SpriteEffects.None;
+            if (Body.LastActiveOrientation.X > 0)
+            {
+                effect = SpriteEffects.FlipHorizontally;
+            }
+
+            spriteBatch.Draw(GetFrameTexture(), destinationRectangle: new Rectangle((int)position.X, (int)position.Y, (int)Body.Size.X, (int)Body.Size.Y), color: Color.White * _opacity, effects: effect);
         }
 
         public override void Update(GameTime gameTime)
@@ -80,6 +124,8 @@ namespace elevatorAction.Characters
                 default:
                     break;
             }
+
+            _walkAnimation.Update(gameTime);
         }
 
         private void CheckIfShot()
@@ -351,6 +397,11 @@ namespace elevatorAction.Characters
             _playerTexture.SetData(Enumerable.Repeat(Color.White, (int)Body.Size.X * (int)Body.Size.Y).ToArray());
             bulletPool = new BulletPool(game, this, 3);
             Body.Orientation = Vector2.One;
+
+            _standAnimation = AnimationFactory.StandAnimation();
+            _walkAnimation = AnimationFactory.WalkAnimation();
+            _crouchAnimation = AnimationFactory.CrouchAnimation();
+            _jumpingAnimation = AnimationFactory.JumpingAnimation();
         }
     }
 }
