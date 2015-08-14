@@ -18,7 +18,7 @@ namespace elevatorAction.MapStuff
 
         private int _shaftSize;
 
-        private bool _turbo = true;
+        private bool _turbo = false;
 
 
         private Vector2 _elevatorStartPosition;
@@ -120,7 +120,7 @@ namespace elevatorAction.MapStuff
 
             float limitUp = 0;
             float limitDown = 0;
-            float direction = 4;
+            float direction = 3;
 
             if (positionSelf.Y > positionTarget.Y)
             {
@@ -134,7 +134,7 @@ namespace elevatorAction.MapStuff
                 limitDown = positionSelf.Y;
             }
 
-            float temp = positionSelf.Y + (direction * (float)gameTime.ElapsedGameTime.TotalSeconds * Map.Instance.CellSize.Y * ((_turbo) ? 5f : 1f));
+            float temp = positionSelf.Y + (direction * (float)gameTime.ElapsedGameTime.TotalSeconds * Map.Instance.CellSize.Y * ((_turbo) ? 3f : 1f));
             temp = MathHelper.Clamp(temp, limitDown, limitUp);
             positionSelf.Y = temp;
 

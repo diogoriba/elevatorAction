@@ -26,7 +26,7 @@ namespace elevatorAction.Characters
         {
             if (bullets.Count < MaxElements)
             {
-                Bullet newBullet = new Bullet(Owner, Owner.Body.CollisionRectangle.Center.ToVector2());
+                Bullet newBullet = new Bullet(Owner, Owner.Body.Position + new Vector2(Map.Instance.CellSize.X / 2, Map.Instance.CellSize.Y));
                 newBullet.Initialize(game);
                 bullets.Add(newBullet);
                 Map.Instance.Entities.Add(newBullet);
@@ -45,7 +45,7 @@ namespace elevatorAction.Characters
         public Entity Owner { get; private set; }
 
         public Bullet(Entity owner, Vector2 initialPosition) 
-            : base(initialPosition, Map.Instance.CellSize * new Vector2(0.5f, 0.25f))
+            : base(initialPosition, Map.Instance.CellSize * new Vector2(0.5f, 0.1f))
         {
             Owner = owner;
         }

@@ -21,7 +21,19 @@ namespace elevatorAction
                 _position = value;
             }
         }
-        public Vector2 Size { get; set; }
+
+        private Vector2 _size;
+        public Vector2 Size 
+        {
+            get 
+            { 
+                return _size; 
+            }
+            set 
+            { 
+                _size = value; 
+            }
+        }
         private Vector2 orientation;
         public Vector2 Orientation 
         {

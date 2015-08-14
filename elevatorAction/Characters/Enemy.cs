@@ -21,7 +21,7 @@ namespace elevatorAction.Characters
         private BulletPool _bulletPool;
         private float _attackTimer;
         private const float _timeToAttack = 0.5f;
-        private const float _timeToAttackRecovery = 0.5f;
+        private const float _timeToAttackRecovery = 1f;
         private const float _timeToAttackCooldown = 1f;
 
         private readonly Vector2 SIGHT_RECTANGLE_SIZE = new Vector2(10, 5);

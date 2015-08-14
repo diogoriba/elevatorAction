@@ -44,7 +44,7 @@ namespace elevatorAction.Characters
         {
             Vector2 position = Body.Position;
 
-            spriteBatch.Draw(_playerTexture, position, Color.White * _opacity);
+            spriteBatch.Draw(_playerTexture, new Rectangle((int)position.X, (int)position.Y, (int)Body.Size.X, (int)Body.Size.Y), Color.White * _opacity);
         }
 
         public override void Update(GameTime gameTime)
@@ -59,6 +59,10 @@ namespace elevatorAction.Characters
                     break;
                 case PlayerState.Jumping:
                     Jumping(gameTime);
+                    Shoot(gameTime);
+                    break;
+                case PlayerState.Crouching:
+                    Crouching(gameTime);
                     Shoot(gameTime);
                     break;
                 case PlayerState.Falling:
@@ -175,6 +179,12 @@ namespace elevatorAction.Characters
             }
             else
             {
+                if (Input.KeyWasPressed(Keys.Down) && !controlingElevator)
+                {
+                    BeginCrouching();
+                    return;
+                }
+
                 Body.Orientation = Vector2.Zero;
 
                 if (Input.IsKeyDown(Keys.Right))
@@ -202,13 +212,58 @@ namespace elevatorAction.Characters
             }
         }
 
+        private void Crouch()
+        {
+            Body.Position = new Vector2(Body.Position.X, Body.Position.Y + Map.Instance.CellSize.Y);
+            Body.Size = new Vector2(Body.Size.X, Body.Size.Y - Map.Instance.CellSize.Y);
+        }
+
+        private void StandUp()
+        {
+            Body.Position = new Vector2(Body.Position.X, Body.Position.Y - Map.Instance.CellSize.Y);
+            Body.Size = new Vector2(Body.Size.X, Body.Size.Y + Map.Instance.CellSize.Y);
+        }
+
+        private void BeginCrouching()
+        {
+            _currentState = PlayerState.Crouching;
+            Crouch();
+        }
+
+        private void Crouching(GameTime gameTime)
+        {
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (Input.KeyWasPressed(Keys.Up))
+            {
+                StandUp();
+                BeginWalking();
+            }
+            if (Input.IsKeyDown(Keys.Right))
+            {
+                Body.Orientation += Vector2.UnitX;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            {
+                Body.Orientation -= Vector2.UnitX;
+            }
+            Body.Orientation = Vector2.UnitY; // gravity
+
+            Vector2 tentativePosition = Body.Position;
+            tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(8f, 8f);
+            List<Entity> collidesWith = MoveTo(tentativePosition);
+        }
+
+        private bool jumpCheckpoint1;
+        private bool jumpCheckpoint2;
         private float _elapsedJumpTime;
+        private const float _totalJumpTime = 0.5f;
         private void BeginJumping(GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             _currentState = PlayerState.Jumping;
             _elapsedJumpTime = 0;
             Body.Orientation = (Body.Orientation * Vector2.UnitX) + new Vector2(0, -1);
+            Crouch();
             Jumping(gameTime, true);
             _elapsedJumpTime -= deltaTime; // do not count first frame
         }
@@ -222,14 +277,14 @@ namespace elevatorAction.Characters
 
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Vector2 tentativePosition = Body.Position;
-            tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 2.4f);
+            tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 6f);
             var collided = MoveTo(tentativePosition);
             if (collided.Any(entity => entity is Wall))
             {
                 Body.Orientation *= Vector2.UnitY;
             }
             _elapsedJumpTime += deltaTime;
-            if (_elapsedJumpTime >= 0.5)
+            if (_elapsedJumpTime >= _totalJumpTime)
             {
                 BeginFalling(gameTime);
             }
@@ -237,6 +292,8 @@ namespace elevatorAction.Characters
 
         private void BeginFalling(GameTime gameTime)
         {
+            jumpCheckpoint2 = false;
+            _elapsedJumpTime = 0;
             _currentState = PlayerState.Falling;
             Body.Orientation = (Body.Orientation * Vector2.UnitX) + new Vector2(0, 1);
             Falling(gameTime);
@@ -251,12 +308,13 @@ namespace elevatorAction.Characters
 
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Vector2 tentativePosition = Body.Position;
-            tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 2.4f);
+            tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(3f, 6f);
             List<Entity> collidedWith = MoveTo(tentativePosition);
             bool grounded = collidedWith.Any(entity => entity is Floor || entity is Elevator);
             bool walled = collidedWith.Any(entity => entity is Wall);
             if (grounded)
             {
+                StandUp();
                 BeginWalking();
             }
             if (walled)
