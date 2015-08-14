@@ -54,7 +54,7 @@ namespace elevatorAction
                 int direction = Math.Sign(distance.Y);
                 Vector2 movement = (direction * scrollSpeed * Map.Instance.CellSize * deltaTime);
                 Vector2 tentativePos = Body.Position + movement;
-                tentativePos.Y = MathHelper.Clamp(tentativePos.Y, 0, Map.Instance.Height - Body.Size.Y);
+                tentativePos.Y = MathHelper.Clamp(tentativePos.Y, 0, Map.Instance.Height - (Body.Size.Y/2));
                 Vector2 newDistance = player.Body.CollisionRectangle.Center.ToVector2() - (tentativePos + Body.Size/2);
                 if (Math.Abs(newDistance.Y) > Math.Abs(distance.Y))
                 {

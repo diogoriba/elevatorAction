@@ -113,13 +113,13 @@ namespace elevatorAction.Characters
                 if (lookahead.Any(entity => entity is Floor || entity is Elevator))
                 {
                     Vector2 tentativePosition = Body.Position;
-                    tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(8f, 8f);
+                    tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(8f, 4f);
                     List<Entity> collidesWith = MoveTo(tentativePosition);
                 }
                 else
                 {
                     Vector2 tentativePosition = Body.Position;
-                    tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(0f, 8f);
+                    tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(0f, 4f);
                     List<Entity> collidesWith = MoveTo(tentativePosition);
                 }
             }
@@ -127,7 +127,7 @@ namespace elevatorAction.Characters
             {
                 // follow to another floor
                 Vector2 tentativePosition = Body.Position;
-                tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(0f, 8f);
+                tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(0f, 4f);
                 List<Entity> collidesWith = MoveTo(tentativePosition);
             }
         }
@@ -177,7 +177,7 @@ namespace elevatorAction.Characters
             }
             _attackTimer += deltaTime;
             Vector2 tentativePosition = Body.Position;
-            tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(0f, 8f);
+            tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(0f, 4f);
             List<Entity> collidesWith = MoveTo(tentativePosition);
         }
 
@@ -197,7 +197,7 @@ namespace elevatorAction.Characters
             }
             _attackTimer += deltaTime;
             Vector2 tentativePosition = Body.Position;
-            tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(0f, 8f);
+            tentativePosition += Body.Orientation * deltaTime * Map.Instance.CellSize * new Vector2(0f, 4f);
             List<Entity> collidesWith = MoveTo(tentativePosition);
         }
 
